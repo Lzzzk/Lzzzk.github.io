@@ -1,35 +1,323 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE html>
 <html>
+
 <head>
-  <title>My first styled page</title>
-  <link rel="stylesheet" href="mystyle.css">
+	<meta charset="utf-8">
+	<title>Sound Puzzle</title>
+	<script type="text/javascript" src="jquery-3.6.0.min.js">
+
+	</script>
+	<script type="text/javascript" src="alert.js"></script>
 </head>
 
 <body>
 
-<!-- Site navigation menu -->
-<ul class="navbar">
-  <li><a href="index.html">Home page</a>
-  <li><a href="musings.html">Musings</a>
-  <li><a href="town.html">My town</a>
-  <li><a href="links.html">Links</a>
-</ul>
 
-<!-- Main content -->
-<h1>My first styled page</h1>
 
-<p>Welcome to my styled page!
 
-<p>It lacks images, but at least it has style.
-And it has links, even if they don't go
-anywhere&hellip;
 
-<p>There should be more here, but I don't know
-what yet.
+	<table border="0">
+		<tr>
+			<th>
+<div class="first">
+				<img width="400px" src="1-1.png" onclick="controlMusic1()" id="img1" />
+				<div id="main1">
+					<p style="margin-left:-150px"> What planet's sound is this:</p>
+					</br>
+					<input id="answer1" type="answer" placeholder="Enter Answer" style="color: #FFFF00" />
+					<button onclick="CHECK1()">CHECK</button>
+				</div>
+				</div>
 
-<!-- Sign and date the page, it's only polite! -->
-<address>Made 5 April 2004<br>
-  by myself.</address>
+			</th>
+
+			<th>
+
+				<div class="second">
+					<img width="400px" src="2-1.png" onclick="controlMusic2()" id="img2" />
+					<div id="main2">
+						<p style="margin-left:-150px"> What planet's sound is this:</p>
+						</br>
+						<input id="answer2" type="answer" placeholder="Enter Answer" style="color: #FFFF00" />
+						<button onclick="CHECK2()">CHECK</button>
+					</div>
+
+			</th>
+		</tr>
+
+		<tr>
+			<th>
+				<div class="last">
+					<img width="400px" src="3-1.png" onclick="controlMusic3()" id="img3" />
+					<div id="main3">
+
+						<p style="margin-left:-150px"> What planet's sound is this:</p>
+						</br>
+						<input id="answer3" type="answer" placeholder="Enter Answer" style="color: #FFFF00" />
+						<button onclick="CHECK3()">CHECK</button>
+					</div>
+
+			</th>
+		</tr>
+	</table>
+	</br>
+	</br>
+	</br>
+	</br>
+</br>
+</br>
+	<p style="text-align:right; margin-right:5%;">Lzzz 2022/04/17</p>
+	<p style="text-align:right; margin-right:5%;letter-spacing:-2px;"> —————————————————————— </p>
+	<p style="text-align:right; margin-right:5%;">Music Source：NASA</p>
+		<p style="text-align:right; margin-right:5%;">《Voyager Space Sounds》1990</p>
+		<p style="text-align:right; margin-right:5%;">《Space Recordings》1990</p>
+	</br>
+	</br>
+
+	<div id="oo">
+		<h1 class="one" style="color: black;">Sound Puzzles</h1>
+		<h1 class="two" style="color: #916a43;">Universe Sounds</h1>
+		<h1 class="three" style="color: #000000;animation: changecolor 1s infinite;">Click to Listen</h1>
+	</div>
+
+
+
+	<style type="text/css">
+		body {
+			background-image: linear-gradient(30deg, #000000, yellow)
+				/* background:repeating-linear-gradient(90deg,red 0%,orange 5%,yellow 10%,green 15%,blue 20%,indigo 25%,purple 30%); */
+		}
+
+		* {
+			padding: 0;
+			margin: 0;
+		}
+
+		#oo {
+			position: fixed;
+			top: 30%;
+			display: flex;
+			flex-direction: column;
+			width: 100px;
+		}
+
+		.one {
+			background-color: #FFFF00;
+		}
+
+		.two {
+			background-color: #000000;
+		}
+
+		.three {
+			background-color: #916a43;
+		}
+
+		.first {
+			position: relative;
+			left: 160px;
+		}
+
+		.second {
+			position: relative;
+			top: 180px;
+			left: 300px;
+		}
+
+		.last {
+			position: relative;
+			left: 280px;
+			top: 100px;
+		}
+
+		p {
+			font-family: Georgia;
+			color: #FFFF00;
+		}
+
+		h1 {
+			width: 5em;
+			font-family: Helvetica;
+			word-break: keep-all;
+		}
+
+		button {
+			background: #FFFF00;
+			border: 1px solid #FFFF00;
+			height: 32px;
+			width: 70px;
+
+		}
+
+		input {
+			background: transparent;
+			border: 1px solid #FFFF00;
+			height: 30px;
+			width: 300px;
+			text-align: center;
+			caret-color：#FFFF00；
+		}
+
+		/* WebKit browsers */
+		input::-webkit-input-placeholder {
+			color: #FFFF00;
+			font-size: 14px;
+		}
+
+		/* Mozilla Firefox 4 to 18 */
+		input:-moz-placeholder {
+			color: #FFFF00;
+			opacity: 1;
+			font-size: 14px;
+		}
+
+		/* Mozilla Firefox 19+ */
+		input::-moz-placeholder {
+			color: #FFFF00;
+			opacity: 1;
+			font-size: 14px;
+		}
+
+		/* Internet Explorer 10+ */
+		input:-ms-input-placeholder {
+			color: #FFFF00;
+			font-size: 14px;
+		}
+
+
+		@keyframes changecolor {
+			from {
+				color: black;
+			}
+
+			to {
+				color: yellow;
+			}
+		}
+
+
+		/* img:hover {
+			animation: changeimg 1s;
+
+
+		}
+
+		@keyframes changeimg {
+			from {
+				transform: rotateY(0deg);
+				-webkit-transform: rotateY(0deg);
+			}
+
+			to {
+				transform: rotateY(180deg);
+				-webkit-transform: rotateY(180deg);
+			}
+		}
+
+		.responsive {
+			float: left;
+		} */
+	</style>
+	<script>
+		var audio1 = new Audio("1.mp3")
+
+		function controlMusic1() {
+			if (audio1.paused) {
+				audio1.play();
+				$('#img1').attr('src', "1-2.gif")
+
+			} else {
+				audio1.pause();
+				$('#img1').attr('src', "1-1.png")
+
+			}
+			img1 = !img1
+		}
+
+		function CHECK1() {
+			var a = document.getElementById("answer1").value;
+			if (a == "木星" || a == "Jupiter" || a == "jupiter") {
+				alert("Right! It's Jupiter.")
+				$('#img1').attr('src', "1-end.png")
+				$("#main1").fadeOut(2000)
+				$("#img1").removeAttr('onclick')
+				audio1.pause()
+				// setTimeout(()=>{},1000)
+
+			} else {
+				alert("You are wrong, listen again. It comes from  the largest planet in the solar system.")
+
+			}
+		}
+
+
+
+		var audio2 = new Audio("2.mp3")
+
+		function controlMusic2() {
+			if (audio2.paused) {
+				audio2.play();
+				$('#img2').attr('src', "2-2.gif")
+
+			} else {
+				audio2.pause();
+				$('#img2').attr('src', "2-1.png")
+
+			}
+			img2 = !img2
+		}
+
+		function CHECK2() {
+
+			var b = document.getElementById("answer2").value;
+			if (b == "天王星" || b == "Neptune" || b == "neptune") {
+				alert("Right! It's Neptune.")
+				$('#img2').attr('src', "2-end.png")
+				$("#main2").fadeOut(2000)
+				$("#img2").removeAttr('onclick')
+				audio2.pause()
+				// setTimeout(()=>{},1000)
+
+
+			} else {
+				alert("You are wrong, listen again. It's a lonely planet.")
+
+			}
+		}
+
+
+
+		var audio3 = new Audio("3.mp3")
+
+		function controlMusic3() {
+			if (audio3.paused) {
+				audio3.play();
+				$('#img3').attr('src', "3-2.gif")
+
+			} else {
+				audio3.pause();
+				$('#img3').attr('src', "3-1.png")
+
+			}
+			img3 = !img3
+		}
+
+		function CHECK3() {
+
+			var c = document.getElementById("answer3").value;
+			if (c == "地球" || c == "Earth" || c == "earth") {
+				alert("Right! It comes from the planet under your feet.")
+				$('#img3').attr('src', "3-end.png")
+				$("#main3").fadeOut(2000)
+				$("#img3").removeAttr('onclick')
+				audio3.pause()
+				// setTimeout(()=>{},1000)
+			} else {
+				alert("You are wrong, listen again. You should be familiar with it.")
+			}
+		}
+	</script>
 
 </body>
+
 </html>

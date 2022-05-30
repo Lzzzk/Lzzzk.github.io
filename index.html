@@ -1,323 +1,188 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<title>Sound Puzzle</title>
-	<script type="text/javascript" src="jquery-3.6.0.min.js">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSS Positioning</title>
+  <!-- 动效JavaScript 文件 -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <!-- 国内 Staticfile CDN 上的 Bootstrap5 核心 JavaScript 文件 -->
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
+  <!-- 国内 Staticfile CDN 上的 Bootstrap5 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+  <style type="text/css">
+    body {
+      background-color: black;
 
-	</script>
-	<script type="text/javascript" src="alert.js"></script>
+    }
+
+    .text {
+      font-size: 120px;
+
+    }
+
+    .start {
+      width: 700px;
+      height: 350px;
+      background: transparent url(./img1/1.png) 0 0 no-repeat;
+  cursor:url('./img1/clink.png'), default;
+    }
+
+
+    .start:hover {
+      animation: name 3s steps(46) infinite;
+
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    }
+
+
+    .text {
+      width: 99%;
+      word-break: break-130;
+      justify-content: center;
+      text-align: center;
+      align-items: center;
+      font-family: Agrandir-MediumC4-o;
+      color: #fff;
+      position: absolute;
+      line-height: 0.9;
+    }
+
+    .name {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      position: absolute;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      mix-blend-mode: difference;
+
+    }
+
+
+
+    @keyframes name {
+      from {
+        background-position: 0 0;
+      }
+
+      to {
+        background-position: 0 -16100px;
+      }
+    }
+
+
+
+    @media screen and (max-width: 1080px) {
+      body {
+        background-color: #e52387;
+      }
+
+      .text {
+        font-size: 90px;
+
+
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        background-color: black;
+      }
+
+      .text {
+        font-size: 60px;
+
+      }
+      .start {
+        width: 400px;
+        height: 200px;
+        background: transparent url(./img1/2.png) 0 0 no-repeat;
+    cursor:url('./img1/clink.png'), default;
+      }
+
+
+      .start:hover {
+        animation: name 3s steps(46) infinite;
+
+      }
+
+      @keyframes name {
+        from {
+          background-position: 0 0;
+        }
+
+        to {
+          background-position: 0 -9200px;
+        }
+      }
+    }
+
+
+    @media screen and (max-width: 550px) {
+      body {
+        background-color: black;
+      }
+
+      .text {
+        color:  #e52387;
+        font-size: 30px;
+margin-bottom: 200px;
+margin-left: 100px;
+text-align:left;
+line-height: 4;
+      }
+
+
+
+      .name {
+
+        margin-top: 150px;
+      }
+
+
+    }
+
+
+
+
+  </style>
+  <title>Hello, world!</title>
 </head>
 
 <body>
+  <div class="container">
 
+    <div class="name">
+      <div class="start" onclick="window.location.href='1.html';return false"></div>
+    </div>
+      <div class="text">Lzzż </br>丨Graphic丨</br>丨Art丨</br>丨Phtotgraphy丨 </div>
 
+  </div>
 
 
 
-	<table border="0">
-		<tr>
-			<th>
-<div class="first">
-				<img width="400px" src="1-1.png" onclick="controlMusic1()" id="img1" />
-				<div id="main1">
-					<p style="margin-left:-150px"> What planet's sound is this:</p>
-					</br>
-					<input id="answer1" type="answer" placeholder="Enter Answer" style="color: #FFFF00" />
-					<button onclick="CHECK1()">CHECK</button>
-				</div>
-				</div>
+  <!-- Optional JavaScript; choose one of the two! -->
 
-			</th>
 
-			<th>
 
-				<div class="second">
-					<img width="400px" src="2-1.png" onclick="controlMusic2()" id="img2" />
-					<div id="main2">
-						<p style="margin-left:-150px"> What planet's sound is this:</p>
-						</br>
-						<input id="answer2" type="answer" placeholder="Enter Answer" style="color: #FFFF00" />
-						<button onclick="CHECK2()">CHECK</button>
-					</div>
-
-			</th>
-		</tr>
-
-		<tr>
-			<th>
-				<div class="last">
-					<img width="400px" src="3-1.png" onclick="controlMusic3()" id="img3" />
-					<div id="main3">
-
-						<p style="margin-left:-150px"> What planet's sound is this:</p>
-						</br>
-						<input id="answer3" type="answer" placeholder="Enter Answer" style="color: #FFFF00" />
-						<button onclick="CHECK3()">CHECK</button>
-					</div>
-
-			</th>
-		</tr>
-	</table>
-	</br>
-	</br>
-	</br>
-	</br>
-</br>
-</br>
-	<p style="text-align:right; margin-right:5%;">Lzzz 2022/04/17</p>
-	<p style="text-align:right; margin-right:5%;letter-spacing:-2px;"> —————————————————————— </p>
-	<p style="text-align:right; margin-right:5%;">Music Source：NASA</p>
-		<p style="text-align:right; margin-right:5%;">《Voyager Space Sounds》1990</p>
-		<p style="text-align:right; margin-right:5%;">《Space Recordings》1990</p>
-	</br>
-	</br>
-
-	<div id="oo">
-		<h1 class="one" style="color: black;">Sound Puzzles</h1>
-		<h1 class="two" style="color: #916a43;">Universe Sounds</h1>
-		<h1 class="three" style="color: #000000;animation: changecolor 1s infinite;">Click to Listen</h1>
-	</div>
-
-
-
-	<style type="text/css">
-		body {
-			background-image: linear-gradient(30deg, #000000, yellow)
-				/* background:repeating-linear-gradient(90deg,red 0%,orange 5%,yellow 10%,green 15%,blue 20%,indigo 25%,purple 30%); */
-		}
-
-		* {
-			padding: 0;
-			margin: 0;
-		}
-
-		#oo {
-			position: fixed;
-			top: 30%;
-			display: flex;
-			flex-direction: column;
-			width: 100px;
-		}
-
-		.one {
-			background-color: #FFFF00;
-		}
-
-		.two {
-			background-color: #000000;
-		}
-
-		.three {
-			background-color: #916a43;
-		}
-
-		.first {
-			position: relative;
-			left: 160px;
-		}
-
-		.second {
-			position: relative;
-			top: 180px;
-			left: 300px;
-		}
-
-		.last {
-			position: relative;
-			left: 280px;
-			top: 100px;
-		}
-
-		p {
-			font-family: Georgia;
-			color: #FFFF00;
-		}
-
-		h1 {
-			width: 5em;
-			font-family: Helvetica;
-			word-break: keep-all;
-		}
-
-		button {
-			background: #FFFF00;
-			border: 1px solid #FFFF00;
-			height: 32px;
-			width: 70px;
-
-		}
-
-		input {
-			background: transparent;
-			border: 1px solid #FFFF00;
-			height: 30px;
-			width: 300px;
-			text-align: center;
-			caret-color：#FFFF00；
-		}
-
-		/* WebKit browsers */
-		input::-webkit-input-placeholder {
-			color: #FFFF00;
-			font-size: 14px;
-		}
-
-		/* Mozilla Firefox 4 to 18 */
-		input:-moz-placeholder {
-			color: #FFFF00;
-			opacity: 1;
-			font-size: 14px;
-		}
-
-		/* Mozilla Firefox 19+ */
-		input::-moz-placeholder {
-			color: #FFFF00;
-			opacity: 1;
-			font-size: 14px;
-		}
-
-		/* Internet Explorer 10+ */
-		input:-ms-input-placeholder {
-			color: #FFFF00;
-			font-size: 14px;
-		}
-
-
-		@keyframes changecolor {
-			from {
-				color: black;
-			}
-
-			to {
-				color: yellow;
-			}
-		}
-
-
-		/* img:hover {
-			animation: changeimg 1s;
-
-
-		}
-
-		@keyframes changeimg {
-			from {
-				transform: rotateY(0deg);
-				-webkit-transform: rotateY(0deg);
-			}
-
-			to {
-				transform: rotateY(180deg);
-				-webkit-transform: rotateY(180deg);
-			}
-		}
-
-		.responsive {
-			float: left;
-		} */
-	</style>
-	<script>
-		var audio1 = new Audio("1.mp3")
-
-		function controlMusic1() {
-			if (audio1.paused) {
-				audio1.play();
-				$('#img1').attr('src', "1-2.gif")
-
-			} else {
-				audio1.pause();
-				$('#img1').attr('src', "1-1.png")
-
-			}
-			img1 = !img1
-		}
-
-		function CHECK1() {
-			var a = document.getElementById("answer1").value;
-			if (a == "木星" || a == "Jupiter" || a == "jupiter") {
-				alert("Right! It's Jupiter.")
-				$('#img1').attr('src', "1-end.png")
-				$("#main1").fadeOut(2000)
-				$("#img1").removeAttr('onclick')
-				audio1.pause()
-				// setTimeout(()=>{},1000)
-
-			} else {
-				alert("You are wrong, listen again. It comes from  the largest planet in the solar system.")
-
-			}
-		}
-
-
-
-		var audio2 = new Audio("2.mp3")
-
-		function controlMusic2() {
-			if (audio2.paused) {
-				audio2.play();
-				$('#img2').attr('src', "2-2.gif")
-
-			} else {
-				audio2.pause();
-				$('#img2').attr('src', "2-1.png")
-
-			}
-			img2 = !img2
-		}
-
-		function CHECK2() {
-
-			var b = document.getElementById("answer2").value;
-			if (b == "天王星" || b == "Neptune" || b == "neptune") {
-				alert("Right! It's Neptune.")
-				$('#img2').attr('src', "2-end.png")
-				$("#main2").fadeOut(2000)
-				$("#img2").removeAttr('onclick')
-				audio2.pause()
-				// setTimeout(()=>{},1000)
-
-
-			} else {
-				alert("You are wrong, listen again. It's a lonely planet.")
-
-			}
-		}
-
-
-
-		var audio3 = new Audio("3.mp3")
-
-		function controlMusic3() {
-			if (audio3.paused) {
-				audio3.play();
-				$('#img3').attr('src', "3-2.gif")
-
-			} else {
-				audio3.pause();
-				$('#img3').attr('src', "3-1.png")
-
-			}
-			img3 = !img3
-		}
-
-		function CHECK3() {
-
-			var c = document.getElementById("answer3").value;
-			if (c == "地球" || c == "Earth" || c == "earth") {
-				alert("Right! It comes from the planet under your feet.")
-				$('#img3').attr('src', "3-end.png")
-				$("#main3").fadeOut(2000)
-				$("#img3").removeAttr('onclick')
-				audio3.pause()
-				// setTimeout(()=>{},1000)
-			} else {
-				alert("You are wrong, listen again. You should be familiar with it.")
-			}
-		}
-	</script>
-
+  <!-- Option 2: Separate Popper and Bootstrap JS -->
+  <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    -->
 </body>
 
 </html>

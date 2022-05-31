@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CSS Positioning</title>
+  <title>Lzzż</title>
   <!-- 动效JavaScript 文件 -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -19,9 +19,49 @@
 
     }
 
-    .text {
-      font-size: 120px;
+    /* .header {
+        padding-top: 9px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid transparent;
+        margin-bottom: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        position: absolute;
+        z-index: 10000;
+    }
 
+    .header-ln {
+    width: 200%;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 24px;
+    overflow: hidden;
+  } */
+#header{
+  background-color: black;
+cursor:url('./img1/clink2.png'), default;
+}
+#header-text{
+  color: #fff;
+  font-family: Helvetica;
+  cursor:url('./img1/clink2.png'), default;
+}
+#header-text:hover {
+  border-bottom:1px solid #e52387;
+}
+
+#header-littletext{
+  color: #fff;
+  font-family: Helvetica;
+  cursor:url('./img1/clink2.png'), default;
+}
+  #header-littletext:hover {
+    background-color: #e52387;
+  }
+
+    .text {
+
+      font-size: 120px;
     }
 
     .start {
@@ -49,11 +89,10 @@
 
     .text {
       width: 99%;
-      word-break: break-130;
       justify-content: center;
       text-align: center;
       align-items: center;
-      font-family: Agrandir-MediumC4-o;
+      font-family: Helvetica;
       color: #fff;
       position: absolute;
       line-height: 0.9;
@@ -85,9 +124,9 @@
 
 
 
-    @media screen and (max-width: 1080px) {
+    @media screen and (max-width: 992px) {
       body {
-        background-color: #e52387;
+        background-color: black;
       }
 
       .text {
@@ -98,8 +137,16 @@
     }
 
     @media screen and (max-width: 768px) {
+
       body {
-        background-color: black;
+        background-color: #e52387;
+      }
+      #header{
+        background-color: #e52387;
+      border:none;}
+
+      #header-littletext:hover {
+      border-bottom:1px solid black;
       }
 
       .text {
@@ -111,13 +158,11 @@
         height: 200px;
         background: transparent url(./img1/2.png) 0 0 no-repeat;
     cursor:url('./img1/clink.png'), default;
+    animation: name 3s steps(46) infinite;
       }
 
 
-      .start:hover {
-        animation: name 3s steps(46) infinite;
 
-      }
 
       @keyframes name {
         from {
@@ -131,7 +176,7 @@
     }
 
 
-    @media screen and (max-width: 550px) {
+    @media screen and (max-width: 576px) {
       body {
         background-color: black;
       }
@@ -140,9 +185,8 @@
         color:  #e52387;
         font-size: 30px;
 margin-bottom: 200px;
-margin-left: 100px;
-text-align:left;
-line-height: 4;
+
+line-height: 3;
       }
 
 
@@ -163,10 +207,37 @@ line-height: 4;
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-md sticky-top">
+<div class="container-fluid " id="header" >
+<a class="navbar-brand" id="header-text" >Lzzż</a>
+<button class="navbar-toggler navbar-dark" style="background-color:black; border: 2px solid black;border-radius: 0px;"id="buttonchange" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <ul class="navbar-nav me-auto mb-2 mb-md-0">
+    <li class="nav-item">
+      <a class="nav-link active" id="header-text" aria-current="page" href="WORKS.html">WORKS</a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link active" id="header-text" aria-current="page" href="">CONTACT</a>
+    </li>
+
+  </ul>
+
+</div>
+
+</div>
+</nav>
+
+
+
+
+
   <div class="container">
 
     <div class="name">
-      <div class="start" onclick="window.location.href='1.html';return false"></div>
+      <div class="start" onclick="window.location.href='WORKS.html';return false"></div>
     </div>
       <div class="text">Lzzż </br>丨Graphic丨</br>丨Art丨</br>丨Phtotgraphy丨 </div>
 
@@ -186,4 +257,3 @@ line-height: 4;
 </body>
 
 </html>
-

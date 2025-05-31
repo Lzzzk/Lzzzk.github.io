@@ -1,0 +1,92 @@
+@font-face {
+    font-family: 'EuropeUnderground';
+    src: url('../fonts/europeunderground_black-webfont.woff') format('woff'),
+    url('../fonts/europeunderground_black-webfont.woff2') format('woff2');
+}
+
+
+h1 {
+    font-family: EuropeUnderground;
+    font-weight: 400;
+    margin: 0;
+    font-size: clamp(1.55rem, 3.5vw, 3.3rem);
+    line-height: 1.1;
+    color: #313333;
+    letter-spacing: 0;
+    display: block;
+}
+
+.h1-school {
+    font-size: clamp(1.55rem, 3.5vw, 3.3rem);
+}
+
+.icon {
+    height: 0.9em;
+    width: auto;
+    vertical-align: middle; /* 或 baseline，按视觉需要调整 */
+}
+
+
+.mobile h1 {
+    font-weight: 440;
+    font-size: 1.60rem;
+}
+
+h1 a {
+    color: #313333;
+    text-decoration: none;
+}
+
+.h1-mark {
+    font-size: 0.8em;
+    position: relative;
+    top: -0.1em;
+}
+
+h1 a:hover {
+}
+
+
+.marquee-vertical {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.marquee-inner {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.marquee-block {
+    margin-bottom: 30vh;
+}
+
+
+
+.title-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw; /* 整体随页面宽度变化 */
+    z-index: 9999;
+    pointer-events: none; /* 可选：防止挡住页面交互 */
+}
+
+.title-img {
+    width: 100%;
+    display: block;
+}
+
+.year-img {
+    position: absolute;
+    bottom: 25%;   /* 这个百分比是关键，要按原图比例微调 */
+    right: 1%;
+    width: 4.5%;    /* 让它随父容器比例缩放，保持相对比例 */
+}
+
+
+

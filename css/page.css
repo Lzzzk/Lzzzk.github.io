@@ -1,0 +1,102 @@
+@font-face {
+    font-family: 'EuropeUnderground';
+    src: url('../fonts/europeunderground_black-webfont.woff') format('woff'),
+    url('../fonts/europeunderground_black-webfont.woff2') format('woff2');
+}
+
+body {
+    margin: 1em;
+    scrollbar-width: none;
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+}
+
+.project-header {
+    margin-bottom: 40px;
+}
+
+.project-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+h1{
+    font-family: EuropeUnderground;
+    margin: 0;
+    font-size: clamp(1.55rem, 3.5vw, 5rem);
+    line-height: 1.1;
+    color: #313333;
+    letter-spacing: 0;
+    padding-bottom: 1rem;
+
+}
+
+.project-title{
+    font-family: EuropeUnderground;
+    margin: 0;
+    font-size: clamp(1.55rem, 3.5vw, 3.3rem);
+    line-height: 1.1;
+    color: #313333;
+    letter-spacing: 0;
+
+}
+
+.intro {
+    font-size: 1.2rem;
+    max-width: 45%;
+    font-family: Futura LT Light;
+    margin: 0;
+    color: #313333;
+    line-height: 1.1;
+}
+
+
+.contact {
+    font-size: 1rem;
+    /*text-align: right;*/
+    max-width: 45%;
+    font-family: EuropeUnderground;
+    margin: 0;
+    line-height: 1.1;
+    color: #313333;
+    letter-spacing: 0;
+}
+
+
+/* ✅ 横向排列 intro 和 contact，两端对齐 */
+.intro-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+
+
+
+
+
+/*body {*/
+/*    margin: 1em;*/
+
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.image-grid {*/
+/*    display: grid;*/
+/*    grid-template-columns: 1fr 1fr;*/
+/*    gap: 1em;*/
+/*    width:100%;             !* 随屏幕变化缩放 *!*/
+/*    !*max-width: 800px;       !* 最大宽度限制 *!*!*/
+/*    margin: 2em auto;*/
+/*}*/
+
+/*.image-grid img {*/
+/*    width: 100%;        !* 填满每个格子 *!*/
+/*    height: auto;       !* 保持原始比例 *!*/
+/*    display: block;     !* 去掉底部空隙 *!*/
+/*    object-fit: cover;  !* 可选：填充并裁剪（你也可以用 contain） *!*/
+/*}*/

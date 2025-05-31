@@ -11,26 +11,31 @@ fetch('../assets/shared/person.csv')
         const emailIndex = headers.indexOf('Email');
         const insIndex = headers.indexOf('Ins');
 
-        // 获取当前页面的文件名作为人物名称（如 "Alice Zhang.html" => "Alice Zhang"）
-            const fileName = window.location.pathname.split('/').pop().replace('.html', '').trim();
-            const dataLine = lines.slice(1).find(line => {
-                    const cols = line.split(',');
-                    return cols[nameIndex]?.replace(/^"|"$/g, '').trim() === fileName;
-            });
-            if (!dataLine) return;
+        // ✅ 获取页面上已有的名字
+        const artistName = document.querySelector('.artist-name')?.textContent.trim();
 
-            const cols = dataLine.split(',');
-            const name = cols[nameIndex]?.trim();
-            const course = cols[courseIndex]?.trim();
-            const project = cols[projectIndex]?.trim();
-            const intro = cols[introIndex]?.replace(/"/g, '').trim();
-            const email = cols[emailIndex]?.trim();
-            const ins = cols[insIndex]?.trim();
+        if (!artistName) return;
 
-// 插入信息到页面模板
-            document.querySelector('.artist-name').textContent = name;
-            document.querySelector('.project-title').textContent = project;
-            document.querySelector('.intro').textContent = intro;
-            document.querySelector('.contact').innerHTML = `${course}<br />${email}<br />${ins}`;
 
+
+        // ✅ 查找 CSV 中与 artistName 匹配的行
+        const dataLine = lines.slice(1).find(line => {
+            const cols = line.split(',');
+            return cols[nameIndex]?.replace(/^"|"$/g, '').trim() === artistName;
+        });
+
+
+        if (!dataLine) return;
+
+        const cols = dataLine.split(',');
+        const course = cols[courseIndex]?.trim();
+        const project = cols[projectIndex]?.trim();
+        const intro = cols[introIndex]?.replace(/"/g, '').trim();
+        const email = cols[emailIndex]?.trim();
+        const ins = cols[insIndex]?.trim();
+
+        // ✅ 填充其余字段
+        document.querySelector('.project-title').textContent = project;
+        document.querySelector('.intro').textContent = intro;
+        document.querySelector('.contact').innerHTML = `${course}<br />${email}<br />${ins}`;
     });

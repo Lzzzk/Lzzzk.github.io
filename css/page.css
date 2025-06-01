@@ -35,10 +35,11 @@ h1{
 .project-title{
     font-family: EuropeUnderground;
     margin: 0;
-    font-size: clamp(1.55rem, 3.5vw, 3.3rem);
+    font-size: clamp(1rem, 3vw, 3rem);
     line-height: 1.1;
     color: #313333;
     letter-spacing: 0;
+    padding-bottom: 1rem;
 
 }
 

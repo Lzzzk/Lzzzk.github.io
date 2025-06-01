@@ -119,7 +119,7 @@
 
 .personal-page {
     position: fixed;
-    top: calc(clamp(1.5rem, 2.5vw, 2rem) + 3.5em);
+    top: calc(clamp(1.5rem, 2.5vw, 2rem) + 2.8em);
     left: calc(clamp(0.2em, 20vw, 20em) - 5em);
     width: 50vw;
     height: 82vh;

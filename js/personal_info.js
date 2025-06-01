@@ -34,6 +34,9 @@ fetch('../assets/shared/person.csv')
         const email = cols[emailIndex]?.trim();
         const ins = cols[insIndex]?.trim();
 
+        // console.log('📍 Ins 字段索引:', insIndex);
+
+
         // ✅ 填充其余字段
         document.querySelector('.project-title').textContent = project;
         document.querySelector('.intro').textContent = intro;

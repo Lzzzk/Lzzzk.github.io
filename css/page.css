@@ -5,16 +5,14 @@
 }
 
 body {
-    margin: 1em;
+    margin: clamp(1rem, 3.5vw, 2em);
     scrollbar-width: none;
     /*display: flex;*/
     /*justify-content: center;*/
     /*align-items: center;*/
 }
 
-.project-header {
-    margin-bottom: 40px;
-}
+
 
 .project-title {
     font-size: 2rem;
@@ -23,92 +21,90 @@ body {
 
 h1{
     font-family: EuropeUnderground;
-    margin: 0;
-    font-size: clamp(1.55rem, 3.5vw, 5rem);
+    font-size: clamp(1.55rem, 3.5vw, 4rem);
     line-height: 1.1;
     color: #313333;
     letter-spacing: 0;
-    padding-bottom: 1rem;
+    /*padding-bottom: 1rem;*/
 
 }
 
-.project-title{
+.project-title {
     font-family: EuropeUnderground;
-    margin: 0;
-    font-size: clamp(2rem, 2vw, 2.5rem);
-    line-height: 1.1;
+    font-size: clamp(1.3rem, 2vw, 2.5rem);
+    line-height: 0;
     color: #313333;
     letter-spacing: 0;
+    white-space: normal;
+    margin: 0;
     padding-bottom: 1rem;
-
+    line-height: 1.5;
 }
 
 .intro {
     font-size: 1.2rem;
     font-family: Futura LT Light;
-    margin: 0;
     color: #313333;
     line-height: 1.1;
-
+    margin: 0;
 }
 
 .contact {
     font-size: 1rem;
     font-family: Futura LT Light;
-    margin: 0;
-    line-height: 1.1;
     color: #313333;
+    line-height: 1.1;
     letter-spacing: 0;
-
+    margin: 0;
 }
 
 
 
-
-/*.intro-left {*/
-/*    flex: 1 1 60%;*/
-/*}*/
-
-/*.intro-right {*/
-/*    flex: 1 1 40%;*/
-/*}*/
-
-
-.contact {
-    font-size: 1rem;
-    font-family: Futura LT Light;
-    margin: 0;
-    line-height: 1.1;
-    color: #313333;
-    letter-spacing: 0;
-
-    flex: 1 1 30%;
-    max-width: 30%;
+.info-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 左侧2份，右侧1份 = 2:1 比例 */
+    column-gap: 50px;
+    padding-bottom: 1rem;
+    /*align-items: start;*/
 }
 
-.project-info {
+.image-gallery {
     display: flex;
-    gap: 2rem;
-    align-items: flex-start;
     flex-wrap: wrap;
-    margin-top: 1rem;
+    gap: 1rem;
 }
 
-.left-col {
-    flex: 1 1 70%;
-    max-width: 70%;
+.image-box {
+    flex: 1 1 calc(33.33% - 1rem); /* 每行 3 张图，减去间距 */
+    box-sizing: border-box;
 }
 
-.right-col {
-    flex: 1 1 30%;
-    max-width: 30%;
+.image-box img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 }
 
-@media (max-width: 768px) {
-    .left-col, .right-col {
+/* ✅ 在小屏幕上变成每行 1 张图 */
+@media (max-width: 560px) {
+    .image-box {
         flex: 1 1 100%;
-        max-width: 100%;
     }
+    .image-gallery {
+        gap: 0.5rem;
+    }
+    .info-row {
+        grid-template-columns: 1fr;
+        row-gap: 0.1rem;
+    }
+
+}
+
+
+
+@media (max-width: 560px) {
+
 }
 
 

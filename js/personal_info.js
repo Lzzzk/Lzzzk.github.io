@@ -1,44 +1,27 @@
 fetch('../assets/shared/person.csv')
     .then(res => res.text())
     .then(csvText => {
-        const lines = csvText.trim().split('\n');
-        const headers = lines[0].split(',');
+            const parsed = Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true
+            });
 
-        const nameIndex = headers.indexOf('Name');
-        const courseIndex = headers.indexOf('Course Name');
-        const projectIndex = headers.indexOf('Project Name');
-        const introIndex = headers.indexOf('Introduction');
-        const emailIndex = headers.indexOf('Email');
-        const insIndex = headers.indexOf('Ins');
+            const data = parsed.data;
 
-        // ✅ 获取页面上已有的名字
-        const artistName = document.querySelector('.artist-name')?.textContent.trim();
+            const artistName = document.querySelector('.artist-name')?.textContent.trim();
+            if (!artistName) return;
 
-        if (!artistName) return;
+            const person = data.find(p => p['Name']?.trim() === artistName);
+            if (!person) return;
 
+            const cleanText = str => str?.trim().replace(/^"(.*)"$/, '$1') || '';
 
+            document.querySelector('.project-title').textContent = cleanText(person['Project Name']);
+            document.querySelector('.intro').textContent = cleanText(person['Introduction']);
 
-        // ✅ 查找 CSV 中与 artistName 匹配的行
-        const dataLine = lines.slice(1).find(line => {
-            const cols = line.split(',');
-            return cols[nameIndex]?.replace(/^"|"$/g, '').trim() === artistName;
-        });
-
-
-        if (!dataLine) return;
-
-        const cols = dataLine.split(',');
-        const course = cols[courseIndex]?.trim();
-        const project = cols[projectIndex]?.trim();
-        const intro = cols[introIndex]?.replace(/"/g, '').trim();
-        const email = cols[emailIndex]?.trim();
-        const ins = cols[insIndex]?.trim();
-
-        // console.log('📍 Ins 字段索引:', insIndex);
-
-
-        // ✅ 填充其余字段
-        document.querySelector('.project-title').textContent = project;
-        document.querySelector('.intro').textContent = intro;
-        document.querySelector('.contact').innerHTML = `${course}<br />${email}<br />${ins}`;
+            document.querySelector('.contact').innerHTML = `
+      ${person['Course Name'] || ''}<br />
+      ${person['Email'] || ''}<br />
+      ${person['Ins'] || ''}
+    `;
     });

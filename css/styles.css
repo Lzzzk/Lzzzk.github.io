@@ -9,7 +9,7 @@ h1 {
     font-family: EuropeUnderground;
     font-weight: 400;
     margin: 0;
-    font-size: clamp(1.55rem, 3.5vw, 3.3rem);
+    font-size: clamp(1.15rem, 4vw, 3.3rem);
     line-height: 1.1;
     color: #313333;
     letter-spacing: 0;
@@ -89,10 +89,10 @@ h1 a:hover {
     width: 4.5%;    /* 让它随父容器比例缩放，保持相对比例 */
 }
 
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {*/
 
-    h1 {
-        font-size: 1.15rem;
-    }
+/*    h1 {*/
+/*        font-size: 1.15rem;*/
+/*    }*/
 
-}
+/*}*/

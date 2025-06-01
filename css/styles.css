@@ -24,6 +24,7 @@ h1 {
     height: 0.9em;
     width: auto;
     vertical-align: middle; /* 或 baseline，按视觉需要调整 */
+    margin-top: 25vh;
 }
 
 
@@ -89,6 +90,4 @@ h1 a:hover {
     width: 4.5%;    /* 让它随父容器比例缩放，保持相对比例 */
 }
 
-.spacer-25vh {
-    height: 25vh;
-}
+

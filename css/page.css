@@ -95,7 +95,7 @@ h1{
 }
 
 /* ✅ 在小屏幕上变成每行 1 张图 */
-@media (max-width: 560px) {
+@media (max-width: 500px) {
     .image-box {
         flex: 1 1 100%;
     }

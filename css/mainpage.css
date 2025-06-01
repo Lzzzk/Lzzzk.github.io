@@ -119,6 +119,9 @@
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
+
+
+
 .personal-page {
     position: fixed;
     top: calc(clamp(1.5rem, 2.5vw, 2rem) + 2.8em);
@@ -168,6 +171,21 @@
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
+
+
+@media (max-width: 560px) {
+    .mask {
+        position: relative;
+        mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
+    }
+    .mask2 {
+        height: 100%;
+        width: 100%;
+        mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
+    }
+}
 
 
 

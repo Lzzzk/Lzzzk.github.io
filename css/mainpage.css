@@ -97,7 +97,7 @@
 
 /* 滑动区域 */
 .scrollable {
-    max-height: 90%;
+    max-height: 90dvh;
     overflow-y: auto;
     position: relative;
     scrollbar-width: none;       /* Firefox */
@@ -131,7 +131,7 @@
     /*box-shadow: 0 0 1em 1em #1e1e88;*/
     background: #ffffff;
     box-shadow: 0 0 1em 1em #ffffff;
-    z-index: 10000;
+    z-index: 9999;
     display: none;
 
     border-radius: 3px;
@@ -173,17 +173,14 @@
 
 
 @media (max-width: 560px) {
-    .mask {
-        position: relative;
-        mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
+    .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 10000;
+        font-size: 100rem;
     }
-    .mask2 {
-        height: 100%;
-        width: 100%;
-        mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
-    }
+
 }
 
 

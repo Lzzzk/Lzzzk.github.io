@@ -10,12 +10,20 @@
     url('../fonts/europeunderground_black-webfont.woff2') format('woff2');
 }
 
+html, body {
+    padding: 0;
+    overflow-y: scroll;           /* ✅ 保留垂直滚动功能 */
+    -ms-overflow-style: none;     /* ✅ IE/Edge */
+    scrollbar-width: none;        /* ✅ Firefox */
+}
+
 body {
-    margin: clamp(1rem, 3.5vw, 2em);
-    scrollbar-width: none;
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
+    margin: clamp(1rem, 3.5vw, 2em); /* ✅ 自适应边距 */
+}
+
+/* ✅ 隐藏 Chrome / Safari 滚动条 */
+body::-webkit-scrollbar {
+    display: none;
 }
 
 
@@ -65,7 +73,6 @@ body {
     letter-spacing: 0;
     margin: 0;
 }
-
 
 
 .info-row {

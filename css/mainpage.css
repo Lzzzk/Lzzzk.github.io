@@ -70,7 +70,7 @@
     margin: 0 auto;   /* 水平居中 */
     max-width: 40em;  /* 防止过宽 */
     /*column-width: 10em;*/
-    padding: 0.8em 0em 2em 0em;
+    padding: clamp(1.2em, 2vw, 1.5em) 0em 2em 0em;
 }
 
 

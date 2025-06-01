@@ -35,7 +35,7 @@ h1{
 .project-title{
     font-family: EuropeUnderground;
     margin: 0;
-    font-size: clamp(1rem, 3vw, 3rem);
+    font-size: clamp(2rem, 2vw, 2.5rem);
     line-height: 1.1;
     color: #313333;
     letter-spacing: 0;
@@ -45,33 +45,79 @@ h1{
 
 .intro {
     font-size: 1.2rem;
-    max-width: 45%;
     font-family: Futura LT Light;
     margin: 0;
     color: #313333;
     line-height: 1.1;
-}
 
+    flex: 1 1 70%;
+}
 
 .contact {
     font-size: 1rem;
-    /*text-align: right;*/
-    max-width: 45%;
-    font-family: EuropeUnderground;
+    font-family: Futura LT Light;
     margin: 0;
     line-height: 1.1;
     color: #313333;
     letter-spacing: 0;
+
+    flex: 1 1 30%;
+    max-width: 30%;
 }
 
 
-/* ✅ 横向排列 intro 和 contact，两端对齐 */
-.intro-row {
+
+
+/*.intro-left {*/
+/*    flex: 1 1 60%;*/
+/*}*/
+
+/*.intro-right {*/
+/*    flex: 1 1 40%;*/
+/*}*/
+
+
+.contact {
+    font-size: 1rem;
+    font-family: Futura LT Light;
+    margin: 0;
+    line-height: 1.1;
+    color: #313333;
+    letter-spacing: 0;
+
+    flex: 1 1 30%;
+    max-width: 30%;
+}
+
+.project-info {
     display: flex;
-    justify-content: space-between;
+    gap: 2rem;
     align-items: flex-start;
-    width: 100%;
+    flex-wrap: wrap;
+    margin-top: 1rem;
 }
+
+.left-col {
+    flex: 1 1 70%;
+    max-width: 70%;
+}
+
+.right-col {
+    flex: 1 1 30%;
+    max-width: 30%;
+}
+
+@media (max-width: 768px) {
+    .left-col, .right-col {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+
+
+
+
+
 
 
 

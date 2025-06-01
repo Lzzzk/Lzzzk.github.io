@@ -56,10 +56,13 @@
     z-index: 1000;
 }
 
-.dropdown:hover .dropdown-menu,
-.dropdown-menu:hover {
+.dropdown.show .dropdown-menu {
     display: flex;
 }
+/*.dropdown:hover .dropdown-menu,*/
+/*.dropdown-menu:hover {*/
+/*    display: flex;*/
+/*}*/
 
 
 
@@ -144,6 +147,23 @@
     width: 98%;
     height: 100%;
     border: none;
+    display: block;
+}
+
+.close-button {
+    position: absolute;
+    top: 1em;
+    right: 0.5em;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 10001;
+}
+
+.close-button img {
+    width: 1.5em;  /* 可根据需要调整大小 */
+    height: auto;
     display: block;
 }
 

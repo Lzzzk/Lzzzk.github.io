@@ -25,10 +25,10 @@ body {
     margin-bottom: 10px;
 }
 
-h1{
+.artist-name{
     font-family: EuropeUnderground;
     font-weight: 400;
-    font-size: clamp(1.55rem, 3.5vw, 4rem);
+    font-size: clamp(1.4rem, 3vw, 3.5rem);
     line-height: 1.1;
     color: #313333;
     letter-spacing: 0;
@@ -39,7 +39,7 @@ h1{
 .project-title {
     font-family: EuropeUnderground;
     font-weight: 400;
-    font-size: clamp(1.3rem, 2vw, 2.5rem);
+    font-size: clamp(1.2rem, 2vw, 2.5rem);
     line-height: 0;
     color: #313333;
     letter-spacing: 0;
@@ -50,7 +50,7 @@ h1{
 }
 
 .intro {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 2vw, 1.2rem);;
     font-family: Futura LT Light;
     color: #313333;
     line-height: 1.1;

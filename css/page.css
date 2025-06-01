@@ -1,4 +1,10 @@
 @font-face {
+    font-family: 'Futura LT Light';
+    src: url('../fonts/FuturaLT-Light.woff') format('woff'),
+    url('../fonts/FuturaLT-Light.woff2') format('woff2');
+}
+
+@font-face {
     font-family: 'EuropeUnderground';
     src: url('../fonts/europeunderground_black-webfont.woff') format('woff'),
     url('../fonts/europeunderground_black-webfont.woff2') format('woff2');

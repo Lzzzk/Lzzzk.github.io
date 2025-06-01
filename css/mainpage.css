@@ -131,7 +131,7 @@
     /*box-shadow: 0 0 1em 1em #1e1e88;*/
     background: #ffffff;
     box-shadow: 0 0 1em 1em #ffffff;
-    z-index: 9999;
+    z-index: 10000;
     display: none;
 
     border-radius: 3px;

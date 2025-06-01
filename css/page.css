@@ -50,7 +50,6 @@ h1{
     color: #313333;
     line-height: 1.1;
 
-    flex: 1 1 70%;
 }
 
 .contact {
@@ -61,8 +60,6 @@ h1{
     color: #313333;
     letter-spacing: 0;
 
-    flex: 1 1 30%;
-    max-width: 30%;
 }
 
 

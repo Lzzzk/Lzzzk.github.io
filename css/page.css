@@ -78,7 +78,7 @@ body::-webkit-scrollbar {
 .info-row {
     display: grid;
     grid-template-columns: 2fr 1fr; /* 左侧2份，右侧1份 = 2:1 比例 */
-    column-gap: 1rem;
+    column-gap: 2rem;
     padding-bottom: 1rem;
     /*align-items: start;*/
 }

@@ -12,7 +12,7 @@
 
 html, body {
     padding: 0;
-    overflow-y: scroll;           /* ✅ 保留垂直滚动功能 */
+    /*overflow-y: scroll;           !* ✅ 保留垂直滚动功能 *!*/
     -ms-overflow-style: none;     /* ✅ IE/Edge */
     scrollbar-width: none;        /* ✅ Firefox */
 }

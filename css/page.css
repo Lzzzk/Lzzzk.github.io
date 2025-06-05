@@ -17,14 +17,16 @@ html, body {
     scrollbar-width: none;        /* ✅ Firefox */
 }
 
-body {
-    margin: clamp(1rem, 3.5vw, 2em); /* ✅ 自适应边距 */
-}
-
 /* ✅ 隐藏 Chrome / Safari 滚动条 */
 body::-webkit-scrollbar {
     display: none;
 }
+
+
+body {
+    margin: clamp(1rem, 3.5vw, 2em); /* ✅ 自适应边距 */
+}
+
 
 
 

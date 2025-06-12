@@ -9,6 +9,10 @@ body {
     -ms-overflow-style: none; /* IE 10+ */
 }
 
+body.noscroll {
+    overflow: hidden;
+}
+
 body::-webkit-scrollbar {
     display: none; /* Chrome, Safari */
 }

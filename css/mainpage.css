@@ -54,7 +54,12 @@ body::-webkit-scrollbar {
     position: absolute;
     top: 3em;
     left: 0.8em; /* 左对齐项目按钮 */
-    width: 8.5em;
+    /*给ARTISTS*/
+    width: 7.5em;
+    /*给PROJECTS*/
+    /*width: 8.5em;*/
+
+
     background: #F5EA29;
     box-shadow: 0 0 1em 1em #F5EA29;
     border-radius: 3px;
@@ -205,6 +210,65 @@ body::-webkit-scrollbar {
         font-size: 1.3rem;
     }
 }
+
+
+
+.infopage {
+    position: fixed;
+    top: calc(clamp(1.5rem, 2.5vw, 2rem) + 2.8em);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50vw;
+    height: 82dvh;
+    /*background: #1e1e88;*/
+    /*box-shadow: 0 0 1em 1em #1e1e88;*/
+    background: white;
+    box-shadow: 0 0 1em 1em white;
+    z-index: 10000;
+    display: none;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .infopage {
+        width: 80vw;
+        left: 10vw; /* 小屏就不居中，用边距控制 */
+        transform: none; /* 移除 X 轴居中 */
+    }
+}
+
+
+.scrollable3 iframe {
+    padding: 1.5em 1% 1.5em 1%;
+    width: 98%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+
+.scrollable3::-webkit-scrollbar {
+    display: none;
+}
+
+
+.scrollable3 {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    position: relative;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.mask3 {
+    height: 100%;
+    width: 100%;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
 
 
 

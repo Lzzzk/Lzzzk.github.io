@@ -1,0 +1,101 @@
+@font-face {
+    font-family: 'Futura LT Light';
+    src: url('../fonts/FuturaLT-Light.woff') format('woff'),
+    url('../fonts/FuturaLT-Light.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'EuropeUnderground';
+    src: url('../fonts/europeunderground_black-webfont.woff') format('woff'),
+    url('../fonts/europeunderground_black-webfont.woff2') format('woff2');
+}
+
+html, body {
+    padding: 0;
+    /*overflow-y: scroll;           !* ✅ 保留垂直滚动功能 *!*/
+    -ms-overflow-style: none;     /* ✅ IE/Edge */
+    scrollbar-width: none;        /* ✅ Firefox */
+}
+
+/* ✅ 隐藏 Chrome / Safari 滚动条 */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+
+body {
+    margin: clamp(1rem, 3.5vw, 2em); /* ✅ 自适应边距 */
+    display: flex;
+    flex-direction: column;
+}
+
+
+main {
+    flex: 1; /* ✅ 自动占据剩余空间，把 footer 推到底 */
+}
+
+.info-row1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2rem;
+    /*row-gap: 5rem; !* ✅ 设置行距 *!*/
+    padding-bottom: 1rem;
+}
+
+.info-row2 {
+    display: grid;
+    grid-template-columns: auto 1fr; /* ✅ 左边自动撑内容，右边自适应 */
+    column-gap: 1rem;                /* ✅ 左右间距适中 */
+    /*row-gap: 1.2rem;                 !* ✅ 设置行距 *!*/
+    padding: 2rem 0;
+}
+
+.bottom {
+    margin-top: auto; /* ✅ 推动它贴底 */
+}
+
+    .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 90vh; /* ⬅️ 关键点：撑满视口高度 */
+    }
+
+
+    .intro {
+        font-size: clamp(1rem, 2vw, 1.2rem);;
+        font-family: Futura LT Light;
+        color: #313333;
+        line-height: 1.1;
+        margin: 0;
+    }
+
+
+    /* ✅ 在小屏幕上变成每行 1 张图 */
+    @media (max-width: 500px) {
+        /*.image-box {*/
+        /*    flex: 1 1 100%;*/
+        /*}*/
+        /*.image-gallery {*/
+        /*    gap: 0.5rem;*/
+        /*}*/
+        /*.info-row {*/
+        /*    grid-template-columns: 1fr;*/
+        /*    row-gap: 0.1rem;*/
+        /*}*/
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

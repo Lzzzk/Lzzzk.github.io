@@ -85,6 +85,8 @@ body {
     /*align-items: start;*/
 }
 
+
+
 .image-gallery {
     display: flex;
     flex-wrap: wrap;

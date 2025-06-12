@@ -80,7 +80,7 @@ main {
         /*}*/
         .info-row1 {
             grid-template-columns: 1fr;
-            row-gap: 0.1rem;
+            row-gap: 1.5rem;
         }
 
     }

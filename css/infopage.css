@@ -78,10 +78,10 @@ main {
         /*.image-gallery {*/
         /*    gap: 0.5rem;*/
         /*}*/
-        /*.info-row {*/
-        /*    grid-template-columns: 1fr;*/
-        /*    row-gap: 0.1rem;*/
-        /*}*/
+        .info-row1 {
+            grid-template-columns: 1fr;
+            row-gap: 0.1rem;
+        }
 
     }
 }

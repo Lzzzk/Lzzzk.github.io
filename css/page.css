@@ -10,6 +10,9 @@
     url('../fonts/europeunderground_black-webfont.woff2') format('woff2');
 }
 
+
+
+
 html, body {
     padding: 0;
     /*overflow-y: scroll;           !* ✅ 保留垂直滚动功能 *!*/
@@ -30,16 +33,12 @@ body {
 
 
 
-.project-title {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
 
 .artist-name{
     font-family: EuropeUnderground;
     font-weight: 400;
-    font-size: clamp(1.4rem, 3vw, 3.5rem);
-    line-height: 1.1;
+    font-size: clamp(0.9rem, 2vw, 2.5rem);
+    line-height: 0.1;
     color: #313333;
     letter-spacing: 0;
     /*padding-bottom: 1rem;*/
@@ -49,18 +48,47 @@ body {
 .project-title {
     font-family: EuropeUnderground;
     font-weight: 400;
-    font-size: clamp(1.2rem, 2vw, 2.5rem);
-    line-height: 0;
+    font-size: clamp(1.3rem, 2.7vw, 3.5rem);
+    line-height: 0.2;
     color: #313333;
     letter-spacing: 0;
     white-space: normal;
     margin: 0;
-    padding-bottom: 1rem;
     line-height: 1.5;
 }
 
+.course {
+    font-family: Futura LT Light;
+    font-weight: 400;
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
+    /*line-height: 0.2;*/
+
+    letter-spacing: 0;
+    white-space: normal;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.course.ma-digital-media {
+    color: #122D8C;
+}
+
+.course.ma-photography {
+    color: #DE5217;
+}
+
 .intro {
-    font-size: clamp(0.95rem, 2vw, 1.2rem);;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    padding-top: 0.5rem;
+    font-family: Futura LT Light;
+    color: #313333;
+    line-height: 1.1;
+    margin: 0;
+
+}
+
+.bio {
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
     font-family: Futura LT Light;
     color: #313333;
     line-height: 1.1;
@@ -68,13 +96,17 @@ body {
 }
 
 .contact {
-    font-size: 0.95rem;
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
     font-family: Futura LT Light;
     color: #313333;
     line-height: 1.1;
     letter-spacing: 0;
     margin: 0;
+    text-align: right;
+
 }
+
+
 
 
 .info-row {
@@ -82,6 +114,7 @@ body {
     grid-template-columns: 2fr 1fr; /* 左侧2份，右侧1份 = 2:1 比例 */
     column-gap: 2rem;
     padding-bottom: 1rem;
+    padding-top: 1rem;
     /*align-items: start;*/
 }
 
@@ -106,16 +139,31 @@ body {
 }
 
 /* ✅ 在小屏幕上变成每行 1 张图 */
+
+@media (max-width: 780px) {
+
+}
+
+
 @media (max-width: 500px) {
+
+    .info-row {
+        grid-template-columns: 1fr;
+        row-gap: 0.7rem;
+    }
+
+    .contact {
+
+            /*font-size: 0.8rem;*/
+        text-align: left;
+    }
+
     .image-box {
         flex: 1 1 100%;
     }
+
     .image-gallery {
         gap: 0.5rem;
-    }
-    .info-row {
-        grid-template-columns: 1fr;
-        row-gap: 0.1rem;
     }
 
 }

@@ -104,6 +104,11 @@ body::-webkit-scrollbar {
     line-height: 0;
 }
 
+a.active-name:hover {
+    color: #313333;
+    cursor: pointer;
+}
+
 
 
 

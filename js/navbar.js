@@ -43,71 +43,76 @@ fetch('navbar.html')
         });
 
         // ✅ 加载人物名单并设置点击加载个人页 iframe
-        fetch('assets/shared/person.csv')
+        fetch('assets/shared/person_info.csv')
             .then(res => res.text())
             .then(csvText => {
-                const lines = csvText.trim().split('\n');
-                const header = lines[0].split(',');
-                const nameIndex = header.indexOf('Name');
+                const parsed = Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true
+                });
 
                 const nameList = document.querySelector('.name-list');
+                const floatingBox = document.getElementById('personal-page-placeholder');
 
-                lines.slice(1).forEach(line => {
-                    const columns = line.split(',');
-                    const rawName = columns[nameIndex];
+                parsed.data.forEach(row => {
+                    const rawName = row['Name'];
+                    const pageExists = row['Available']?.trim() === '1';
                     if (!rawName) return;
 
                     const cleanName = rawName.trim();
-                    const url = `personal_pages/${encodeURIComponent(cleanName)}.html`;
-
                     const a = document.createElement('a');
-                    // 暂时不加载个人页面 // a.href = url;
                     a.innerHTML = `${cleanName}<sup>&#8201;TM</sup>`;
+
+                    if (pageExists) {
+                        const url = `personal_pages/${encodeURIComponent(cleanName)}.html`;
+                        a.href = url;
+                        a.classList.add('active-name'); // ✅ 加 hover 效果
+                    } else {
+                        a.style.pointerEvents = 'none'; // ❌ 不可点击
+                    }
 
                     const li = document.createElement('li');
                     li.appendChild(a);
                     nameList.appendChild(li);
                 });
 
-                // 暂时不加载个人页面
-                // const floatingBox = document.getElementById('personal-page-placeholder');
-                //
-                // nameList.addEventListener('click', (e) => {
-                //     const a = e.target.closest('a');
-                //     if (!a) return;
-                //     e.preventDefault();
-                //     const url = a.getAttribute('href');
-                //
-                //     if (floatingBox) {
-                //         floatingBox.innerHTML = `
-                //             <button class="close-button" aria-label="Close">
-                //                 <img src="assets/shared/close_button.png" alt="Close" />
-                //             </button>
-                //             <div class="mask2">
-                //                 <div class="scrollable2">
-                //                     <iframe src="${url}" class="personal-iframe"></iframe>
-                //                 </div>
-                //             </div>
-                //         `;
-                //         floatingBox.style.display = 'block';
-                //
-                //         requestAnimationFrame(() => {
-                //             const closeButton = document.querySelector('.close-button');
-                //             if (closeButton) {
-                //                 closeButton.addEventListener('click', () => {
-                //                     floatingBox.style.display = 'none';
-                //                     floatingBox.innerHTML = '';
-                //                 });
-                //             }
-                //         });
-                //     }
-                //
-                //     // ✅ 同时关闭 info 页面
-                //     const infoPage = document.getElementById('info-page');
-                //     if (infoPage) {
-                //         infoPage.style.display = 'none';
-                //     }
-                // });
+
+                nameList.addEventListener('click', (e) => {
+                    const a = e.target.closest('a');
+                    if (!a) return;
+                    e.preventDefault();
+                    const url = a.getAttribute('href');
+
+                    if (floatingBox) {
+                        floatingBox.innerHTML = `
+                            <button class="close-button" aria-label="Close">
+                                <img src="assets/shared/close_button.png" alt="Close" />
+                            </button>
+                            <div class="mask2">
+                                <div class="scrollable2">
+                                    <iframe src="${url}" class="personal-iframe"></iframe>
+                                </div>
+                            </div>
+                        `;
+                        floatingBox.style.display = 'block';
+
+                        requestAnimationFrame(() => {
+                            const closeButton = document.querySelector('.close-button');
+                            if (closeButton) {
+                                closeButton.addEventListener('click', () => {
+                                    floatingBox.style.display = 'none';
+                                    floatingBox.innerHTML = '';
+                                });
+                            }
+                        });
+                    }
+
+                    // ✅ 同时关闭 info 页面
+                    const infoPage = document.getElementById('info-page');
+                    if (infoPage) {
+                        infoPage.style.display = 'none';
+                    }
+                });
             });
 
         // ✅ INFO 页面显示/关闭逻辑

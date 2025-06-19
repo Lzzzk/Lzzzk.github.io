@@ -62,7 +62,7 @@ main {
 
 
     .intro {
-        font-size: clamp(0.95rem, 2vw, 1.2rem);;
+        font-size: clamp(0.95rem, 2vw, 1.2rem);
         font-family: Futura LT Light;
         color: #313333;
         line-height: 1.1;

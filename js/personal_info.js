@@ -17,8 +17,8 @@ fetch('../assets/shared/person_info.csv')
             const cleanText = str => str?.trim().replace(/^"(.*)"$/, '$1') || '';
 
             document.querySelector('.project-title').textContent = cleanText(person['Project Name']);
-            document.querySelector('.project-intro').textContent = cleanText(person['Introduction']);
-        document.querySelector('.bio').textContent = cleanText(person['Bio']);
+        document.querySelector('.project-intro').innerHTML = cleanText(person['Introduction']).replace(/\\n/g, '<br><br>');
+        document.querySelector('.bio').innerHTML = cleanText(person['Bio']).replace(/\\n/g, '<br><br>');
         document.querySelector('.course').textContent = cleanText(person['Course Name']);
 
 

@@ -1,100 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="favicon.png" type="image/png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/mainpage.css">
-    <title>Tender Mechanisms</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAMERICH 锐驰</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="assets/gsap.min.js"></script>
+  <script defer src="pages.js"></script>
+  <script defer src="prototype.js"></script>
+  <script defer src="views.js"></script>
 </head>
-
-
-
 <body>
-
-
-<div class="marquee-vertical">
-    <div class="marquee-inner">
-        <div class="marquee-block">
-            <h1>
-                <a style="color: #DE5217;">
-                    an Exhibition of Digital Media<sup><span class="h1-mark">&#8201;MA</span></sup><br>
-                    &nbsp;&nbsp;<span style="letter-spacing: -0.012em;">  and Photography Practice</span><sup><span
-                        class="h1-mark">&#8201;MA</span></sup>
-                </a>
-            </h1>
-            <h1>
-                <a style="color: #122D8C;">
-                    Opening Night 3<sup><span class="h1-mark">&#8201;rd</span></sup>
-                    &nbsp;&nbsp;&nbsp;July 6<sup><span
-                        class="h1-mark">&#8201;pm&#8201;</span></sup>&#8201;–&#8201;9<sup><span class="h1-mark">&#8201;pm</span></sup><br>
-                    Public View&nbsp;&nbsp;&nbsp;&nbsp;4&#8201;–&#8201;6<sup><span
-                        class="h1-mark">&#8201;th</span></sup>
-                    July 10<sup><span class="h1-mark">&#8201;am</span></sup>&#8201;–&#8201;5<sup><span class="h1-mark">&#8201;pm</span></sup><br>
-                    <span style="color: #F5EA29;">
-      Professor Stuart Hall Building<sup><span class="h1-mark">&#8201;PSH</span></sup><br>
-      Goldsmiths, University of London<sup><span class="h1-mark">&#8201;SE14 6NW</span></sup>
-    </span>
-                </a>
-            </h1>
-            <span class="h1-school">
-  <img src="assets/shared/school.png" class="icon">
-</span>
-
-        </div>
+  <section id="home" class="hero grid" aria-label="品牌首屏">
+    <div class="hero-background" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <h1>CAMERICH</h1>
+      <div class="hero-message">
+        <p id="statement">锐驰品牌价值主张一</p>
+        <a href="#catalog">链接到相关页面 →</a>
+      </div>
     </div>
-</div>
-
-<div style="position: fixed; top: 17%; right: 0; z-index: 9999;">
-    <img src="assets/shared/pillow.png"
-         style="width: 60vw; max-width: 550px; height: auto; display: block;">
-</div>
-
-<!--<div style="position: fixed; bottom: 0; left: 0; z-index: 9999;">-->
-<!--    <img src="assets/shared/title_only.png" style="width: 100%; display: block;">-->
-<!--</div>-->
-
-<div class="title-container">
-    <img src="assets/shared/title_only.png" class="title-img">
-    <img src="assets/shared/2025_animation.gif" class="year-img">
-</div>
-
-
-
-<div id="navbar-placeholder"></div>
-<div class="personal-page" id="personal-page-placeholder">
-    <!-- iframe 会被插入到这里 -->
-</div>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="js/marquee.js"></script>
-<script src="js/navbar.js"></script>
-
-
-
-<div class="infopage" id="info-page" style="display: none;">
-    <button class="close-button" aria-label="Close">
-        <img src="assets/shared/close_button.png" alt="Close" />
-    </button>
-    <div class="mask3">
-        <div class="scrollable3">
-            <iframe src="info.html"></iframe>
-        </div>
+    <div class="slide-controls" aria-label="选择首屏画面"></div>
+  </section>
+  <header class="site-header">
+    <nav class="nav grid" aria-label="主导航">
+      <a class="brand" href="#home">CAMERICH</a>
+      <button type="button" data-menu="products" aria-expanded="false" aria-controls="submenu">产品目录↓</button>
+      <a href="#academy">学院系列</a>
+      <a href="#system">X™ System</a>
+      <button type="button" data-menu="exhibitions" aria-expanded="false" aria-controls="submenu">展览 &amp; 案例↓</button>
+      <button type="button" data-menu="campus" aria-expanded="false" aria-controls="submenu">锐驰园区↓</button>
+      <button type="button" data-menu="creators" aria-expanded="false" aria-controls="submenu">创作者↓</button>
+      <a href="#about">关于锐驰</a>
+      <span class="language">中/英</span>
+    </nav>
+    <div id="submenu" class="submenu grid" hidden>
+      <div class="submenu-content"></div>
     </div>
-
-
-<!--    <button class="close-button" aria-label="Close">-->
-<!--        <img src="assets/shared/close_button.png" alt="Close" />-->
-<!--    </button>-->
-<!--    <div class="mask2">-->
-<!--        <div class="scrollable2">-->
-<!--            <iframe src="${url}" class="personal-iframe"></iframe>-->
-<!--        </div>-->
-<!--    </div>-->
-</div>
-
-
+  </header>
+  <main id="homepage" class="homepage">
+    <section class="home-intro grid" aria-label="锐驰品牌理念">
+      <p>一段关于锐驰品牌理念与设计语言的概述文本，具体内容根据实际需求进行调整，行数限制在2-4行左右。</p>
+      <a href="#about">更多关于锐驰 →</a>
+    </section>
+    <section class="home-products" aria-label="主线产品">
+      <div class="home-track">
+        <div class="home-scenes"></div>
+        <a class="catalog-entry" href="#catalog">完整产品目录 →</a>
+      </div>
+    </section>
+    <div class="home-features grid">
+      <a class="home-feature academy-feature" href="#academy">
+        <img src="assets/home-line-3.svg" alt="">
+        <span>学院系列<br>点击跳转学院系列子页面</span>
+      </a>
+      <a class="home-feature system-feature" href="#system">
+        <img src="assets/home-line-4.svg" alt="">
+        <span>X™ System<br>点击跳转 X™ System 页面</span>
+      </a>
+    </div>
+  </main>
+  <main id="catalog" class="catalog grid" aria-label="产品目录" hidden>
+    <aside class="catalog-side" aria-label="产品品类">
+      <h2>产品</h2>
+      <div class="filters"></div>
+    </aside>
+    <div class="catalog-cover">各类别氛围图</div>
+    <div class="cards" aria-label="产品列表"></div>
+    <p id="filter-status" class="sr-only" role="status"></p>
+    <footer class="footer">
+      <div class="footer-contact"><strong><a href="#about/contact">联系我们 →</a></strong><p><a data-view="template" data-title="咨询">咨询 →</a><br><a href="#campus/beijing">北京研发园区 →</a></p></div>
+      <div class="footer-social"><strong>关注</strong><p><a data-view="template">Instagram →</a><br><a data-view="template">微信公众号 →</a><br><a data-view="template">小红书 →</a></p></div>
+      <div class="footer-download"><strong><a data-view="template">资料下载 →</a></strong></div>
+      <div class="footer-brand">CAMERICH</div>
+      <div class="copyright">Copyright © 2026 Beijing Triumph Furniture Co., Ltd. All rights reserved.<br>京ICP备06026877号</div>
+    </footer>
+  </main>
+  <main id="academy" class="direct-page" hidden>
+    <div class="section-page grid">
+    <h1>学院系列</h1>
+    <div class="section-cover"><span>学院系列 头图<br>可轮播</span></div>
+    <p class="section-copy">一段关于学院系列的概述文本，具体内容根据实际需求进行调整。一段关于学院系列的概述文本，具体内容根据实际需求进行调整。</p>
+    </div>
+  </main>
+  <main id="system" class="direct-page" hidden>
+    <div class="section-page grid">
+    <h1>X™ System</h1>
+    <div class="section-cover"><span>X™ System 头图</span></div>
+    <p class="section-copy">一段关于X™ System的概述文本，具体内容根据实际需求进行调整。一段关于X™ System的概述文本，具体内容根据实际需求进行调整。</p>
+    <a class="section-custom" href="#system/custom">定制 →</a>
+    </div>
+  </main>
+  <main id="about" class="direct-page" aria-label="关于锐驰" hidden>
+    <div class="section-page grid">
+    <h1>关于锐驰</h1>
+    <p class="section-copy">一段关于锐驰的概述文本，具体内容根据实际需求进行调整。一段关于锐驰的概述文本，具体内容根据实际需求进行调整。</p>
+    <div class="section-cover"><span>锐驰产品集合图</span></div>
+    </div>
+  </main>
+  <main id="exhibitions" class="indexed-page grid" aria-label="展览 &amp; 案例" hidden></main>
+  <main id="creators" class="indexed-page grid" aria-label="创作者" hidden></main>
+  <main id="campus" class="indexed-page grid" aria-label="锐驰园区" hidden></main>
+  <dialog class="content-preview" aria-label="内容预览">
+    <form method="dialog"><button>关闭</button></form>
+    <div class="preview-body"></div>
+  </dialog>
 </body>
 </html>

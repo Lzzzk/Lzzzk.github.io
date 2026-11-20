@@ -182,6 +182,7 @@ const submenu = document.querySelector("#submenu");
 const submenuContent = submenu.querySelector(".submenu-content");
 const menuButtons = [...nav.querySelectorAll("[data-menu]")];
 let openedBy;
+let menuOpenedByClick = false;
 let menuHoverTimer;
 
 function cancelMenuHover() {
@@ -193,6 +194,7 @@ function closeMenu() {
   if (!openedBy) return;
   openedBy.setAttribute("aria-expanded", "false");
   openedBy = undefined;
+  menuOpenedByClick = false;
   submenu.hidden = true;
   delete nav.dataset.expanded;
   document.documentElement.classList.remove("menu-open");
@@ -251,11 +253,13 @@ for (const button of menuButtons) {
   });
   button.addEventListener("pointerleave", cancelMenuHover);
   button.addEventListener("click", event => {
-    if (openedBy === button) closeMenu();
-    else {
-      openMenu(button);
-      if (event.detail === 0) submenuContent.querySelector("a, button")?.focus();
+    if (openedBy === button && menuOpenedByClick) {
+      closeMenu();
+      return;
     }
+    if (openedBy !== button) openMenu(button);
+    menuOpenedByClick = true;
+    if (event.detail === 0) submenuContent.querySelector("a, button")?.focus();
   });
 }
 

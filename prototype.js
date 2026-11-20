@@ -182,8 +182,14 @@ const submenu = document.querySelector("#submenu");
 const submenuContent = submenu.querySelector(".submenu-content");
 const menuButtons = [...nav.querySelectorAll("[data-menu]")];
 let openedBy;
+let menuHoverTimer;
+
+function cancelMenuHover() {
+  window.clearTimeout(menuHoverTimer);
+}
 
 function closeMenu() {
+  cancelMenuHover();
   if (!openedBy) return;
   openedBy.setAttribute("aria-expanded", "false");
   openedBy = undefined;
@@ -237,9 +243,19 @@ function openMenu(button) {
 }
 
 for (const button of menuButtons) {
-  button.addEventListener("click", () => {
+  button.addEventListener("pointerenter", event => {
+    if (event.pointerType !== "mouse") return;
+    cancelMenuHover();
+    if (openedBy === button) return;
+    menuHoverTimer = window.setTimeout(() => openMenu(button), openedBy ? 230 : 150);
+  });
+  button.addEventListener("pointerleave", cancelMenuHover);
+  button.addEventListener("click", event => {
     if (openedBy === button) closeMenu();
-    else openMenu(button);
+    else {
+      openMenu(button);
+      if (event.detail === 0) submenuContent.querySelector("a, button")?.focus();
+    }
   });
 }
 
@@ -247,10 +263,10 @@ document.addEventListener("click", (event) => {
   if (!nav.contains(event.target) && !submenuContent.contains(event.target)) closeMenu();
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape" || !openedBy) return;
+  if (event.key !== "Escape") return;
   const button = openedBy;
   closeMenu();
-  button.focus();
+  button?.focus();
 });
 
 const homepage = document.querySelector("#homepage");

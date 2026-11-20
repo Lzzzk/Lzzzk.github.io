@@ -27,7 +27,7 @@ a { color: inherit; text-decoration: none; }
 .nav .brand { grid-column: span 2; font-size: 20px; }
 .language { grid-column: span 3; text-align: right; }
 .nav[data-expanded] > :not(.brand, .language, [aria-expanded="true"]) { color: var(--muted); }
-.submenu { position: absolute; inset: 100% 0 auto; min-height: calc(100dvh - 46px); background: #0006; }
+.submenu { position: absolute; inset: 100% 0 auto; min-height: calc(100dvh - 46px); background: rgb(255 255 255 / 88%); }
 .submenu-content { grid-column: 1 / span 3; margin-left: calc(-1 * var(--gap)); background: white; padding: var(--gap) 0 var(--gap) var(--gap); font-size: 42.5px; line-height: 55px; }
 .submenu-content.campus > :not(:last-child) { margin-bottom: 30px; }
 .submenu-content > :is(button, span) { display: block; }

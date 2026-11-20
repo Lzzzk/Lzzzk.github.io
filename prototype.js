@@ -69,6 +69,7 @@ showSlide(0);
 startSlideshow();
 
 const products = ["全部", "沙发", "休闲椅", "餐桌", "餐椅", "书桌", "床", "柜子", "配品"];
+const startsProductGroup = index => [1, 3, 5, 7].includes(index);
 const menus = {
   products,
   exhibitions: ["展览", "案例"],
@@ -87,6 +88,7 @@ const status = document.querySelector("#filter-status");
 const catalog = document.querySelector("#catalog");
 const catalogCover = document.querySelector(".catalog-cover");
 let activeCategory;
+let hasChosenProductCategory = false;
 const sampleCategories = [...products.slice(1), "沙发", "休闲椅", "餐椅"];
 for (const category of products.slice(1)) sampleCategories.push(...Array(8).fill(category));
 const cardTemplate = document.createElement("template");
@@ -111,8 +113,8 @@ for (const category of sampleCategories) {
 for (const [index, category] of products.entries()) {
   const button = makeButton(category);
   button.className = "filter";
-  if ([1, 3, 5, 7].includes(index)) button.classList.add("spaced");
-  button.addEventListener("click", () => filterProducts(category));
+  if (startsProductGroup(index)) button.classList.add("spaced");
+  button.addEventListener("click", () => filterProducts(category, true));
   filterList.append(button);
 }
 
@@ -120,7 +122,7 @@ function alignFilter(button, selected) {
   if (catalog.hidden) return;
   const rightEdge = filterList.clientWidth - button.offsetWidth;
   const narrow = window.matchMedia("(max-width: 720px)").matches;
-  const x = selected && !narrow ? Math.max(0, rightEdge) : 0;
+  const x = selected && hasChosenProductCategory && !narrow ? Math.max(0, rightEdge) : 0;
   if (engine && !motion.matches) {
     engine.to(button, { ...navMotion, x });
   } else {
@@ -129,7 +131,8 @@ function alignFilter(button, selected) {
   }
 }
 
-function filterProducts(category) {
+function filterProducts(category, chosen = false) {
+  if (chosen) hasChosenProductCategory = true;
   if (activeCategory !== category) {
     const color = category === "全部" ? "#dcdcdc" :
       (activeCategory === "全部" || catalogCover.dataset.shade !== "dark" ? "#bdbdbd" : "#dcdcdc");
@@ -180,32 +183,107 @@ const header = document.querySelector(".site-header");
 const nav = document.querySelector(".nav");
 const submenu = document.querySelector("#submenu");
 const submenuContent = submenu.querySelector(".submenu-content");
-const menuButtons = [...nav.querySelectorAll("[data-menu]")];
+const thumbnail = submenu.querySelector(".nav-thumbnail");
+const navItems = [...nav.querySelectorAll("[data-menu], a:not(.brand)")];
 let openedBy;
+let previewedBy;
 let menuOpenedByClick = false;
 let menuHoverTimer;
+let menuCloseTimer;
+let menuClosing = false;
+const menuFade = { duration: 0.32, ease: "power2.inOut", overwrite: "auto" };
+
+function fadeMenuElement(element, opacity) {
+  engine?.killTweensOf(element, "opacity");
+  if (engine && !motion.matches) engine.to(element, { ...menuFade, opacity });
+  else element.style.opacity = String(opacity);
+}
 
 function cancelMenuHover() {
   window.clearTimeout(menuHoverTimer);
 }
 
-function closeMenu() {
-  cancelMenuHover();
-  if (!openedBy) return;
-  openedBy.setAttribute("aria-expanded", "false");
+function clearExpandedMenu() {
+  openedBy?.setAttribute("aria-expanded", "false");
   openedBy = undefined;
   menuOpenedByClick = false;
-  submenu.hidden = true;
+  submenuContent.hidden = true;
   delete nav.dataset.expanded;
-  document.documentElement.classList.remove("menu-open");
-  document.querySelectorAll("main, #home").forEach(page => { page.inert = false; });
+}
+
+function showMenuLayer() {
+  if (menuClosing) {
+    menuClosing = false;
+    fadeMenuElement(submenu, 1);
+  }
+  if (!submenu.hidden) return;
+  submenu.style.opacity = engine && !motion.matches ? "0" : "1";
+  submenu.hidden = false;
+  fadeMenuElement(submenu, 1);
+  document.documentElement.classList.add("menu-open");
+  document.querySelectorAll("main, #home").forEach(page => { page.inert = true; });
+}
+
+function closeMenu(animated = false) {
+  cancelMenuHover();
+  window.clearTimeout(menuCloseTimer);
+  if (submenu.hidden) return;
+  function finishClosing() {
+    menuClosing = false;
+    clearExpandedMenu();
+    previewedBy?.removeAttribute("data-previewed");
+    previewedBy = undefined;
+    engine?.killTweensOf(thumbnail);
+    thumbnail.hidden = true;
+    submenu.hidden = true;
+    submenu.removeAttribute("data-panel-shown");
+    delete nav.dataset.previewing;
+    document.documentElement.classList.remove("menu-open");
+    document.querySelectorAll("main, #home").forEach(page => { page.inert = false; });
+  }
+  if (animated && engine && !motion.matches) {
+    if (menuClosing) return;
+    menuClosing = true;
+    engine.to(submenu, { ...menuFade, opacity: 0, onComplete: finishClosing });
+  } else {
+    engine?.killTweensOf(submenu);
+    finishClosing();
+  }
+}
+
+function showThumbnail(item) {
+  if (openedBy === item) return;
+  previewedBy?.removeAttribute("data-previewed");
+  previewedBy = item;
+  item.setAttribute("data-previewed", "");
+  nav.dataset.previewing = "";
+  if (!item.dataset.menu) clearExpandedMenu();
+  showMenuLayer();
+  const label = item.textContent.trim().replace(/↓$/, "");
+  thumbnail.replaceChildren(label, document.createElement("br"), "缩略图");
+  thumbnail.style.left = `${item.getBoundingClientRect().left - header.getBoundingClientRect().left}px`;
+  engine?.killTweensOf(thumbnail);
+  thumbnail.hidden = false;
+  thumbnail.style.opacity = engine && !motion.matches ? "0" : "1";
+  fadeMenuElement(thumbnail, 1);
+  thumbnail.removeAttribute("data-fading");
+  thumbnail.removeAttribute("data-pass-through");
+}
+
+function fadeThumbnail() {
+  if (thumbnail.hidden || thumbnail.hasAttribute("data-fading")) return;
+  thumbnail.setAttribute("data-fading", "");
+  if (engine && !motion.matches) {
+    engine.to(thumbnail, { ...menuFade, opacity: 0, onComplete: () => { thumbnail.hidden = true; } });
+  } else thumbnail.hidden = true;
 }
 
 function openMenu(button) {
-  closeMenu();
+  cancelMenuHover();
+  window.clearTimeout(menuCloseTimer);
+  clearExpandedMenu();
   openedBy = button;
-  document.documentElement.classList.add("menu-open");
-  document.querySelectorAll("main, #home").forEach(page => { page.inert = true; });
+  showMenuLayer();
   button.setAttribute("aria-expanded", "true");
   nav.dataset.expanded = button.dataset.menu;
   submenuContent.className = `submenu-content ${button.dataset.menu}`;
@@ -221,10 +299,14 @@ function openMenu(button) {
       return item;
     }
     const item = makeButton(label);
+    item.className = "filter";
+    if (startsProductGroup(index)) item.classList.add("spaced");
+    item.setAttribute("aria-pressed", String(label === activeCategory));
+    if (label === activeCategory && hasChosenProductCategory) item.classList.add("filter-offset");
     if (label === "全部") item.setAttribute("aria-label", "全部产品");
     item.addEventListener("click", () => {
       closeMenu();
-      filterProducts(label);
+      filterProducts(label, true);
       if (location.hash !== "#catalog") {
         navigateTo("#catalog");
         return;
@@ -234,42 +316,95 @@ function openMenu(button) {
     });
     return item;
   });
-  if (["products", "creators"].includes(button.dataset.menu)) {
+  if (button.dataset.menu === "products") {
     const heading = document.createElement("span");
     heading.className = "menu-heading";
-    heading.textContent = button.dataset.menu === "creators" ? "创作者" : "产品";
-    items.unshift(heading);
-  }
-  submenuContent.replaceChildren(...items);
-  submenu.hidden = false;
+    heading.textContent = "产品";
+    const filters = document.createElement("div");
+    filters.className = "filters";
+    filters.append(...items);
+    submenuContent.replaceChildren(heading, filters);
+  } else if (button.dataset.menu === "creators") {
+    const heading = document.createElement("span");
+    heading.className = "menu-heading";
+    heading.textContent = "创作者";
+    submenuContent.replaceChildren(heading, ...items);
+  } else submenuContent.replaceChildren(...items);
+  submenu.setAttribute("data-panel-shown", "");
+  submenuContent.style.opacity = engine && !motion.matches ? "0" : "1";
+  submenuContent.hidden = false;
+  fadeMenuElement(submenuContent, 1);
+  previewedBy?.removeAttribute("data-previewed");
+  previewedBy = undefined;
+  delete nav.dataset.previewing;
+  thumbnail.setAttribute("data-pass-through", "");
 }
 
-for (const button of menuButtons) {
-  button.addEventListener("pointerenter", event => {
+for (const item of navItems) {
+  item.addEventListener("pointerenter", event => {
     if (event.pointerType !== "mouse") return;
     cancelMenuHover();
-    if (openedBy === button) return;
-    menuHoverTimer = window.setTimeout(() => openMenu(button), openedBy ? 230 : 150);
-  });
-  button.addEventListener("pointerleave", cancelMenuHover);
-  button.addEventListener("click", event => {
-    if (openedBy === button && menuOpenedByClick) {
-      closeMenu();
+    if (menuClosing) showMenuLayer();
+    if (openedBy === item) {
+      if (previewedBy) {
+        previewedBy.removeAttribute("data-previewed");
+        previewedBy = undefined;
+        delete nav.dataset.previewing;
+        thumbnail.hidden = true;
+      }
       return;
     }
-    if (openedBy !== button) openMenu(button);
+    showThumbnail(item);
+    if (item.dataset.menu) menuHoverTimer = window.setTimeout(() => openMenu(item), 150);
+  });
+  item.addEventListener("pointerleave", cancelMenuHover);
+  if (!item.dataset.menu) {
+    item.addEventListener("click", () => closeMenu());
+    continue;
+  }
+  item.addEventListener("click", event => {
+    if (openedBy === item && menuOpenedByClick) {
+      closeMenu(true);
+      return;
+    }
+    if (openedBy !== item) openMenu(item);
     menuOpenedByClick = true;
     if (event.detail === 0) submenuContent.querySelector("a, button")?.focus();
   });
 }
 
+thumbnail.addEventListener("click", () => previewedBy?.click());
+submenuContent.addEventListener("pointerenter", event => {
+  if (event.pointerType === "mouse" && openedBy) fadeThumbnail();
+});
+
+function queueMenuClose() {
+  if (submenu.hidden) return;
+  window.clearTimeout(menuCloseTimer);
+  menuCloseTimer = window.setTimeout(() => closeMenu(true), 500);
+}
+
+header.addEventListener("pointerenter", () => window.clearTimeout(menuCloseTimer));
+header.addEventListener("pointerleave", event => {
+  if (event.pointerType === "mouse") queueMenuClose();
+});
+document.addEventListener("pointerout", event => {
+  if (event.pointerType === "mouse" && event.relatedTarget === null) queueMenuClose();
+});
+document.addEventListener("pointerover", event => {
+  if (event.pointerType !== "mouse" || !header.contains(event.target)) return;
+  window.clearTimeout(menuCloseTimer);
+  if (menuClosing && event.target !== submenu) showMenuLayer();
+  if (event.target === submenu && header.contains(event.relatedTarget)) queueMenuClose();
+});
+window.addEventListener("blur", queueMenuClose);
 document.addEventListener("click", (event) => {
-  if (!nav.contains(event.target) && !submenuContent.contains(event.target)) closeMenu();
+  if (!header.contains(event.target) || event.target === submenu) closeMenu(true);
 });
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
-  const button = openedBy;
-  closeMenu();
+  const button = openedBy || previewedBy;
+  closeMenu(true);
   button?.focus();
 });
 

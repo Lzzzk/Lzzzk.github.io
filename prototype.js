@@ -155,11 +155,11 @@ function filterProducts(category) {
   if (!catalog.hidden) revealContent([cardList]);
 }
 
-function revealContent(targets, afterNavigation = false) {
+function revealContent(targets, delay = 0) {
   if (!engine || motion.matches || !targets.length) return;
   engine.killTweensOf(targets, "opacity");
   engine.fromTo(targets, { opacity: 0 }, {
-    opacity: 1, delay: afterNavigation ? navMotion.duration : 0,
+    opacity: 1, delay,
     duration: 0.38, ease: "power2.out", clearProps: "opacity",
   });
 }
@@ -313,7 +313,10 @@ for (const [pageId, keys] of Object.entries(sectionKeys)) {
     entry.summary = copy?.textContent || "";
     copy?.remove();
   }
-  page.prepend(sidebar);
+  const layout = document.createElement("div");
+  layout.className = "indexed-layout grid";
+  layout.append(sidebar, page.querySelector(".indexed-body"));
+  page.prepend(layout);
   indexedNavigation.set(page, { entries, summary });
 }
 
@@ -479,8 +482,12 @@ function renderPage() {
     }
     syncSidebar(false, false, target);
     if (visiblePage !== catalog) {
-      const content = visiblePage.querySelector(".indexed-body, .section-page");
-      if (content && (enteringPage || target)) revealContent([content], indexedNavigation.has(visiblePage));
+      if (enteringPage && !target && (id === "academy" || id === "system")) {
+        revealContent([...visiblePage.querySelectorAll(".section-cover, .section-copy, .section-custom")], 0.18);
+      } else {
+        const content = visiblePage.querySelector(".indexed-body, .section-page");
+        if (content && (enteringPage || target)) revealContent([content], indexedNavigation.has(visiblePage) ? navMotion.duration : 0);
+      }
     }
   } else {
     updateScrollEffects();

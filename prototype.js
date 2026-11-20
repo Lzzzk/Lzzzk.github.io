@@ -184,67 +184,49 @@ const nav = document.querySelector(".nav");
 const submenu = document.querySelector("#submenu");
 const submenuContent = submenu.querySelector(".submenu-content");
 const thumbnail = submenu.querySelector(".nav-thumbnail");
-const navItems = [...nav.querySelectorAll("[data-menu], a:not(.brand)")];
+const navItems = nav.querySelectorAll("[data-menu]");
 let openedBy;
-let previewedBy;
 let menuOpenedByClick = false;
-let menuHoverTimer;
 let menuCloseTimer;
 let menuClosing = false;
 const menuFade = { duration: 0.32, ease: "power2.inOut", overwrite: "auto" };
 
-function fadeMenuElement(element, opacity) {
+function fadeMenuElement(element, opacity, onComplete) {
   engine?.killTweensOf(element, "opacity");
-  if (engine && !motion.matches) engine.to(element, { ...menuFade, opacity });
-  else element.style.opacity = String(opacity);
-}
-
-function cancelMenuHover() {
-  window.clearTimeout(menuHoverTimer);
-}
-
-function clearExpandedMenu() {
-  openedBy?.setAttribute("aria-expanded", "false");
-  openedBy = undefined;
-  menuOpenedByClick = false;
-  submenuContent.hidden = true;
-  delete nav.dataset.expanded;
-}
-
-function showMenuLayer() {
-  if (menuClosing) {
-    menuClosing = false;
-    fadeMenuElement(submenu, 1);
+  if (engine && !motion.matches) engine.to(element, { ...menuFade, opacity, onComplete });
+  else {
+    element.style.opacity = String(opacity);
+    onComplete?.();
   }
-  if (!submenu.hidden) return;
-  submenu.style.opacity = engine && !motion.matches ? "0" : "1";
-  submenu.hidden = false;
-  fadeMenuElement(submenu, 1);
-  document.documentElement.classList.add("menu-open");
-  document.querySelectorAll("main, #home").forEach(page => { page.inert = true; });
+}
+
+function cancelMenuClose() {
+  window.clearTimeout(menuCloseTimer);
+  menuCloseTimer = undefined;
+}
+
+function hideThumbnail() {
+  thumbnail.hidden = true;
+  engine?.killTweensOf(thumbnail);
 }
 
 function closeMenu(animated = false) {
-  cancelMenuHover();
-  window.clearTimeout(menuCloseTimer);
-  if (submenu.hidden) return;
+  cancelMenuClose();
+  if (submenu.hidden || (animated && menuClosing)) return;
   function finishClosing() {
     menuClosing = false;
-    clearExpandedMenu();
-    previewedBy?.removeAttribute("data-previewed");
-    previewedBy = undefined;
-    engine?.killTweensOf(thumbnail);
-    thumbnail.hidden = true;
+    openedBy?.setAttribute("aria-expanded", "false");
+    openedBy = undefined;
+    menuOpenedByClick = false;
+    hideThumbnail();
     submenu.hidden = true;
-    submenu.removeAttribute("data-panel-shown");
-    delete nav.dataset.previewing;
-    document.documentElement.classList.remove("menu-open");
-    document.querySelectorAll("main, #home").forEach(page => { page.inert = false; });
+    submenu.inert = false;
+    delete nav.dataset.expanded;
   }
-  if (animated && engine && !motion.matches) {
-    if (menuClosing) return;
+  if (animated) {
     menuClosing = true;
-    engine.to(submenu, { ...menuFade, opacity: 0, onComplete: finishClosing });
+    submenu.inert = true;
+    fadeMenuElement(submenu, 0, finishClosing);
   } else {
     engine?.killTweensOf(submenu);
     finishClosing();
@@ -252,38 +234,32 @@ function closeMenu(animated = false) {
 }
 
 function showThumbnail(item) {
-  if (openedBy === item) return;
-  previewedBy?.removeAttribute("data-previewed");
-  previewedBy = item;
-  item.setAttribute("data-previewed", "");
-  nav.dataset.previewing = "";
-  if (!item.dataset.menu) clearExpandedMenu();
-  showMenuLayer();
-  const label = item.textContent.trim().replace(/↓$/, "");
-  thumbnail.replaceChildren(label, document.createElement("br"), "缩略图");
-  thumbnail.style.left = `${item.getBoundingClientRect().left - header.getBoundingClientRect().left}px`;
-  engine?.killTweensOf(thumbnail);
+  const layer = submenu.getBoundingClientRect();
+  const label = item.getBoundingClientRect();
+  thumbnail.replaceChildren(item.textContent, document.createElement("br"), "缩略图");
   thumbnail.hidden = false;
+  const gap = Number.parseFloat(getComputedStyle(submenu).paddingLeft);
+  const width = thumbnail.offsetWidth;
+  thumbnail.style.left = `${Math.min(label.right - layer.left + gap, layer.width - width - gap)}px`;
+  thumbnail.style.top = `${Math.max(0, Math.min(label.top - layer.top + 5, window.innerHeight - layer.top - thumbnail.offsetHeight))}px`;
   thumbnail.style.opacity = engine && !motion.matches ? "0" : "1";
   fadeMenuElement(thumbnail, 1);
-  thumbnail.removeAttribute("data-fading");
-  thumbnail.removeAttribute("data-pass-through");
-}
-
-function fadeThumbnail() {
-  if (thumbnail.hidden || thumbnail.hasAttribute("data-fading")) return;
-  thumbnail.setAttribute("data-fading", "");
-  if (engine && !motion.matches) {
-    engine.to(thumbnail, { ...menuFade, opacity: 0, onComplete: () => { thumbnail.hidden = true; } });
-  } else thumbnail.hidden = true;
 }
 
 function openMenu(button) {
-  cancelMenuHover();
-  window.clearTimeout(menuCloseTimer);
-  clearExpandedMenu();
+  cancelMenuClose();
+  if (submenu.hidden || menuClosing) {
+    if (submenu.hidden) submenu.style.opacity = engine && !motion.matches ? "0" : "1";
+    menuClosing = false;
+    submenu.hidden = false;
+    submenu.inert = false;
+    fadeMenuElement(submenu, 1);
+  }
+  if (openedBy === button) return;
+  openedBy?.setAttribute("aria-expanded", "false");
+  hideThumbnail();
+  menuOpenedByClick = false;
   openedBy = button;
-  showMenuLayer();
   button.setAttribute("aria-expanded", "true");
   nav.dataset.expanded = button.dataset.menu;
   submenuContent.className = `submenu-content ${button.dataset.menu}`;
@@ -292,6 +268,7 @@ function openMenu(button) {
       const item = document.createElement("a");
       item.textContent = label;
       item.href = `#${button.dataset.menu}/${sectionKeys[button.dataset.menu][index]}`;
+      if (item.hash === location.hash) item.setAttribute("aria-current", "location");
       item.addEventListener("click", event => {
         event.preventDefault();
         navigateTo(item.hash);
@@ -330,80 +307,60 @@ function openMenu(button) {
     heading.textContent = "创作者";
     submenuContent.replaceChildren(heading, ...items);
   } else submenuContent.replaceChildren(...items);
-  submenu.setAttribute("data-panel-shown", "");
-  submenuContent.style.opacity = engine && !motion.matches ? "0" : "1";
-  submenuContent.hidden = false;
-  fadeMenuElement(submenuContent, 1);
-  previewedBy?.removeAttribute("data-previewed");
-  previewedBy = undefined;
-  delete nav.dataset.previewing;
-  thumbnail.setAttribute("data-pass-through", "");
+  for (const item of items) {
+    item.addEventListener("pointerenter", event => {
+      if (event.pointerType === "mouse") showThumbnail(item);
+    });
+    item.addEventListener("pointerleave", hideThumbnail);
+  }
 }
 
 for (const item of navItems) {
   item.addEventListener("pointerenter", event => {
-    if (event.pointerType !== "mouse") return;
-    cancelMenuHover();
-    if (menuClosing) showMenuLayer();
-    if (openedBy === item) {
-      if (previewedBy) {
-        previewedBy.removeAttribute("data-previewed");
-        previewedBy = undefined;
-        delete nav.dataset.previewing;
-        thumbnail.hidden = true;
-      }
-      return;
-    }
-    showThumbnail(item);
-    if (item.dataset.menu) menuHoverTimer = window.setTimeout(() => openMenu(item), 150);
+    if (event.pointerType === "mouse") openMenu(item);
   });
-  item.addEventListener("pointerleave", cancelMenuHover);
-  if (!item.dataset.menu) {
-    item.addEventListener("click", () => closeMenu());
-    continue;
-  }
   item.addEventListener("click", event => {
-    if (openedBy === item && menuOpenedByClick) {
+    if (openedBy === item && menuOpenedByClick && !menuClosing) {
       closeMenu(true);
       return;
     }
-    if (openedBy !== item) openMenu(item);
+    openMenu(item);
     menuOpenedByClick = true;
     if (event.detail === 0) submenuContent.querySelector("a, button")?.focus();
   });
 }
 
-thumbnail.addEventListener("click", () => previewedBy?.click());
-submenuContent.addEventListener("pointerenter", event => {
-  if (event.pointerType === "mouse" && openedBy) fadeThumbnail();
-});
+submenuContent.addEventListener("scroll", hideThumbnail);
 
 function queueMenuClose() {
-  if (submenu.hidden) return;
-  window.clearTimeout(menuCloseTimer);
+  if (submenu.hidden || menuClosing || menuCloseTimer !== undefined) return;
   menuCloseTimer = window.setTimeout(() => closeMenu(true), 500);
 }
 
-header.addEventListener("pointerenter", () => window.clearTimeout(menuCloseTimer));
-header.addEventListener("pointerleave", event => {
-  if (event.pointerType === "mouse") queueMenuClose();
-});
+function isMenuArea(target) {
+  return Boolean(target?.closest?.(".nav [data-menu], .submenu-content"));
+}
+
 document.addEventListener("pointerout", event => {
   if (event.pointerType === "mouse" && event.relatedTarget === null) queueMenuClose();
 });
 document.addEventListener("pointerover", event => {
-  if (event.pointerType !== "mouse" || !header.contains(event.target)) return;
-  window.clearTimeout(menuCloseTimer);
-  if (menuClosing && event.target !== submenu) showMenuLayer();
-  if (event.target === submenu && header.contains(event.relatedTarget)) queueMenuClose();
+  if (event.pointerType !== "mouse") return;
+  if (event.relatedTarget === null) cancelMenuClose();
+  if (isMenuArea(event.target)) {
+    cancelMenuClose();
+  } else queueMenuClose();
 });
 window.addEventListener("blur", queueMenuClose);
-document.addEventListener("click", (event) => {
-  if (!header.contains(event.target) || event.target === submenu) closeMenu(true);
-});
+function closeForOutsideAction(event) {
+  if (!isMenuArea(event.target)) closeMenu(true);
+}
+document.addEventListener("pointerdown", closeForOutsideAction, true);
+document.addEventListener("click", closeForOutsideAction);
+document.addEventListener("wheel", closeForOutsideAction, { capture: true, passive: true });
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
-  const button = openedBy || previewedBy;
+  const button = openedBy;
   closeMenu(true);
   button?.focus();
 });

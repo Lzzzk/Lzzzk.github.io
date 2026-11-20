@@ -218,7 +218,7 @@
   rotatingCovers.forEach(cover => coverObserver.observe(cover));
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   window.setInterval(() => {
-    if (document.hidden || reducedMotion.matches || document.querySelector(".content-preview").open || document.documentElement.classList.contains("menu-open")) return;
+    if (document.hidden || reducedMotion.matches || document.querySelector(".content-preview").open || document.querySelector(".nav[data-expanded]")) return;
     for (const cover of visibleCovers) cover.classList.toggle("alternate-cover");
   }, 3600);
 })();

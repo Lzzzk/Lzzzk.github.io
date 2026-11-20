@@ -155,12 +155,12 @@ function filterProducts(category) {
   if (!catalog.hidden) revealContent([cardList]);
 }
 
-function revealContent(targets, delay = 0) {
+function revealContent(targets, delay = 0, duration = 0.38) {
   if (!engine || motion.matches || !targets.length) return;
   engine.killTweensOf(targets, "opacity");
   engine.fromTo(targets, { opacity: 0 }, {
     opacity: 1, delay,
-    duration: 0.38, ease: "power2.out", clearProps: "opacity",
+    duration, ease: "power2.out", clearProps: "opacity",
   });
 }
 
@@ -483,7 +483,7 @@ function renderPage() {
     syncSidebar(false, false, target);
     if (visiblePage !== catalog) {
       if (enteringPage && !target && (id === "academy" || id === "system")) {
-        revealContent([...visiblePage.querySelectorAll(".section-cover, .section-copy, .section-custom")], 0.18);
+        revealContent([...visiblePage.querySelectorAll(".section-cover, .section-copy, .section-custom")], 0.4, 0.7);
       } else {
         const content = visiblePage.querySelector(".indexed-body, .section-page");
         if (content && (enteringPage || target)) revealContent([content], indexedNavigation.has(visiblePage) ? navMotion.duration : 0);

@@ -173,6 +173,14 @@ html.menu-open, html:has(.content-preview[open]) { overflow: hidden; }
 .content-grid { row-gap: var(--gap); align-items: start; }
 .direct-page > .footer, .indexed-page > .footer { margin-top: var(--gap); }
 .indexed-page { position: relative; padding-top: var(--nav-height); }
+.indexed-layout { grid-column: 1 / -1; }
+.indexed-page:has(> .index-sidebar) {
+  display: grid;
+  grid-template-columns: var(--tracks);
+  column-gap: var(--gap);
+  padding-inline: var(--gap);
+}
+.indexed-page:has(> .index-sidebar) > .footer { padding-inline: 0; }
 .index-sidebar { grid-column: 1 / span 3; position: sticky; top: var(--nav-height); align-self: start; z-index: 1; display: grid; align-content: start; padding-top: var(--gap); max-height: calc(100svh - var(--nav-height)); overflow: auto; font-size: 42.5px; line-height: 55px; white-space: pre-line; }
 .index-sidebar p { margin-bottom: 55px; }
 .index-sidebar a { display: block; min-width: 0; }

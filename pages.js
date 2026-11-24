@@ -458,6 +458,12 @@ function setupPager(group) {
     camePinned = true;
     showCameEdition(index);
   }));
+  cameEditions[0].addEventListener("click", event => {
+    if (event.target.closest(".came-exhibition .wire-image")) camePinned = true;
+  });
+  cameEditions[0].addEventListener("toggle", event => {
+    if (event.target.matches("details[open]")) camePinned = true;
+  }, true);
   cameSection.addEventListener("resume-edition-carousel", () => { camePinned = false; });
   window.setInterval(() => {
     if (camePinned || document.hidden || cameSection.closest("main").hidden ||

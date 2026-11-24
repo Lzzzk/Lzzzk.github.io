@@ -5,8 +5,8 @@
   const close = dialog.querySelector("form button");
   const content = dialog.querySelector(".preview-body");
   const stack = [];
-  const destinations = { product: "a", gallery: "b", map: "c", story: "d", case: "case" };
-  const routes = new Set(["a", "b", "c", "d", "case", "template"]);
+  const destinations = { product: "a", gallery: "b", map: "c", story: "d", case: "case", event: "e" };
+  const routes = new Set(["a", "b", "c", "d", "case", "e", "template"]);
   const repeat = (count, render) => Array.from({ length: count }, (_, index) => render(index)).join("");
   const escape = value => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
   const titleOf = element => element.dataset.title || element.textContent.trim().replace(/\s*[→↓]\s*$/, "");
@@ -39,11 +39,11 @@
     const caption = element.lastElementChild?.textContent.trim() || "";
     const label = element.textContent.trim();
     let title = titleOf(element);
-    if (view === "a") title = label.match(/主线产品 \d+/)?.[0] || (label.includes("合作产品") ? "合作产品" : "产品名称");
+    if (view === "a") title = label.match(/主线产品 \d+/)?.[0] || (label.includes("合作产品") ? "合作产品" : "产品名");
     if (view === "b") title = element.closest("#system") ? "X™ System 画廊" : "锐驰嘉兴超级工厂画廊";
     if (view === "c") title = element.closest("#exhibitions") ? caption.split("，")[0] : "北京研发园区地图";
     if (view === "d") title = element.closest("#academy") ? "F&文档" : (caption.split("，")[0] || title);
-    if (view === "case") title = caption.split("，")[0];
+    if ((view === "case" || view === "e") && !element.dataset.title) title = (element.matches(".wire-card") ? caption : label).split(/[，\n]/)[0] || title;
     convert(element, view, title);
   }
 
@@ -54,7 +54,7 @@
 
   for (const image of document.querySelectorAll(".wire-image, .section-cover")) {
     if (image.closest("a, .creator-toggle, .creator-projects, #system") ||
-        image.matches("#academy .section-cover, .about-network-image")) continue;
+        image.matches("#academy .section-cover, .about-network-image, .academy-portrait, .residency-cover, .came-profile-portrait, .social-qr")) continue;
     const row = image.closest(".info-row");
     const name = row ? row.firstElementChild.textContent.split("@")[0].trim() : titleOf(image);
     convert(image, "template", name);
@@ -66,8 +66,6 @@
   const previewPicture = (title, caption, className, current = 1) => viewLink("b", title, block(caption), className, current);
   const articleCopy = "正文，具体内容根据实际需求进行调整。";
   const productCopy = "一段关于该产品的设计说明，<br>具体内容根据实际需求进行调整。";
-  const material = repeatCount => repeat(repeatCount, () => `<div>${block("材质图")}<span>Number-00</span></div>`);
-
   function product(title) {
     const menuRoutes = { products: "#catalog", exhibitions: "#exhibitions", campus: "#campus", creators: "#creators" };
     const nav = document.querySelector(".nav").cloneNode(true);
@@ -80,7 +78,6 @@
     }
     const footer = document.querySelector("#catalog .footer").cloneNode(true);
     footer.classList.add("grid");
-    const dimension = () => `<div class="spec-row spec-dimensions"><span>C01G0000</span><small>L 000 cm<br>D 000 cm<br>H 000 cm</small>${previewPicture("尺寸规格（分开）", "线框图<br>点击放大", "spec-image")}</div>`;
     return `${nav.outerHTML}<div class="grid product-view">
       ${previewPicture(title, "产品大图<br>可点击右侧产品画廊切换/或轮播", "product-view-image")}
       <div class="product-view-intro">
@@ -89,26 +86,8 @@
       </div>
       <div class="view-thumbs product-view-thumbs" aria-label="产品画廊缩略图">${photos(4, "产品图", 1)}</div>
       <div class="product-specs">
-        <p class="spec-row">信息列表，根据网站迭代情况增减内容</p>
-        <div class="spec-row"><span>3D 视图</span>${viewLink("template", "3D 视图", "点击跳转 →")}</div>
-        <section aria-label="材质选择">
-          <div class="spec-row"><span>材质选择</span><button type="button" data-spec-toggle aria-expanded="false" aria-controls="extra-materials">查看全部 ↓</button></div>
-          <div class="spec-row"><span>布</span><div class="material-tiles">${material(5)}</div></div>
-          <div class="spec-row"><span>皮</span><div class="material-tiles">${material(3)}</div></div>
-          <div id="extra-materials" hidden>
-            <div class="spec-row"><span>布</span><div class="material-tiles">${material(5)}</div></div>
-            <div class="spec-row"><span>皮</span><div class="material-tiles">${material(5)}</div></div>
-          </div>
-        </section>
-        <section class="spec-overview" aria-label="尺寸规格（整图）">
-          <div class="spec-row"><span>尺寸规格（整图）</span><button type="button" data-spec-toggle="length" aria-expanded="false" aria-controls="overview-drawing">查看全部 ↓</button></div>
-          <div id="overview-drawing">${previewPicture("尺寸规格（整图）", "线框图", "spec-image")}</div>
-        </section>
-        <section aria-label="尺寸规格（分开）">
-          <div class="spec-row"><span>尺寸规格（分开）</span><button type="button" data-spec-toggle aria-expanded="false" aria-controls="extra-dimensions">查看全部 ↓</button></div>
-          ${dimension()}${dimension()}
-          <div id="extra-dimensions" hidden>${dimension()}</div>
-        </section>
+        <div class="spec-row"><span>3D 视图 &amp; 材质选择</span><a href="https://www.camerich.com/3d.php/Index/index/id/3762.html" target="_blank" rel="noopener">点击跳转 →</a></div>
+        <div class="spec-row"><span>尺寸规格</span><a href="assets/线框图占位.pdf" target="_blank" rel="noopener">点击查看 PDF →</a></div>
       </div>
     </div>${footer.outerHTML}`;
   }
@@ -116,24 +95,29 @@
   function gallery(view, title, current) {
     const map = view === "c";
     const caseView = view === "case";
+    const eventView = view === "e";
+    const eventLabel = title.includes("展览") ? "展览"
+      : /^#campus(?:\/|$)/.test(location.hash) || title.includes("园区活动") ? "园区活动" : "事件";
     const mapLabel = title === "北京研发园区地图" ? "园区地图" : "案例地图";
     const mapText = "具体内容根据实际需求进行调整。".repeat(4);
-    return `<div class="grid gallery-view${map || caseView ? " map-view" : ""}${caseView ? " case-view" : ""}">
-      ${caseView ? articleAside(title) : ""}
+    return `<div class="grid gallery-view${map || caseView || eventView ? " map-view" : ""}${caseView ? " case-view" : eventView ? " event-view" : ""}">
+      ${caseView ? articleAside(title, "案例基础信息<br>（城市/项目类型/项目面积/设计师）") : ""}
+      ${eventView ? `<aside class="event-aside"><h1>${escape(title)}</h1><p class="gallery-info">${eventLabel}基础信息<br>（时间/地点/人员）</p><p class="event-gallery-copy" tabindex="0">${`${eventLabel}文本，具体内容根据实际需求进行调整。`.repeat(16)}</p></aside>` : ""}
       ${map ? `<div class="map-panel"><div class="map-overview">
         ${block(`${mapLabel}，<br>悬停时右侧变化`)}
         <div class="map-regions">${repeat(9, i => `<button type="button" data-slide="${i + 1}" aria-label="区域 ${i + 1}"></button>`)}</div>
       </div><p>${mapText}</p></div>` : ""}
       <figure class="gallery-figure">
-        ${block(caseView ? "案例大图" : map ? "各区域大图，<br>悬停左侧地图或者右侧切换" : "大图<br>可点击右侧画廊切换", "gallery-large")}
-        <figcaption><span data-image-number>${current}</span><span>${map ? "区域名称" : "图片名称"}</span></figcaption>
+        ${block(caseView ? "案例大图" : eventView ? "展览大图" : map ? "各区域大图，<br>悬停左侧地图或者右侧切换" : "大图<br>可点击右侧画廊切换", "gallery-large")}
+        ${caseView ? "" : `<figcaption><span data-image-number>${current}</span><span>${map ? "区域名称" : "图注"}</span></figcaption>`}
       </figure>
       <div class="view-thumbs gallery-rail" aria-label="缩略图">${photos(15, "图", current)}</div>
     </div>`;
   }
 
-  function articleAside(title) {
+  function articleAside(title, info = "") {
     return `<aside class="article-aside"><h1>${escape(title)}</h1>
+        ${info ? `<p class="gallery-info">${info}</p>` : ""}
         ${viewLink("a", "涉及产品 1", '<span class="view-block"><span><img src="assets/article-line.svg" alt=""><br>产品白底图<br>点击跳转详情页</span></span><span class="article-product-label">涉及产品 1，点击跳转详情页→</span>', "article-product")}
       </aside>`;
   }
@@ -164,7 +148,7 @@
     dialog.setAttribute("aria-label", title);
     close.textContent = view === "a" ? "<返回" : "关闭";
     content.innerHTML = view === "a" ? product(title)
-      : view === "b" || view === "c" || view === "case" ? gallery(view, title, current)
+      : view === "b" || view === "c" || view === "case" || view === "e" ? gallery(view, title, current)
       : view === "d" ? article(title)
       : `<h1 class="template-title">${escape(title)}</h1>`;
     content.scrollTop = 0;
@@ -215,7 +199,7 @@
     const link = event.target.closest("a[data-view]");
     if (link && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
       event.preventDefault();
-      const image = link.closest("#system") ? Number(document.querySelector(".system-gallery [aria-pressed='true']")?.dataset.image) + 1 : Number(link.dataset.viewImage);
+      const image = link.matches("#system .system-gallery [data-view='b']") ? Number(document.querySelector(".system-gallery [aria-pressed='true']")?.dataset.image) + 1 : Number(link.dataset.viewImage);
       show(link.dataset.view, link.dataset.title, image, link);
       return;
     }
@@ -248,16 +232,6 @@
     card.querySelector(".article-product-label").textContent = `${title}，点击跳转详情页→`;
     card.querySelector(".view-block").classList.toggle("alternate-cover", Number(number) % 2 === 0);
   }, true);
-  content.addEventListener("click", event => {
-    const toggle = event.target.closest("[data-spec-toggle]");
-    if (!toggle) return;
-    const expanded = toggle.getAttribute("aria-expanded") === "true";
-    const target = content.querySelector(`#${toggle.getAttribute("aria-controls")}`);
-    if (toggle.dataset.specToggle === "length") target.classList.toggle("is-long", !expanded);
-    else target.hidden = expanded;
-    toggle.setAttribute("aria-expanded", String(!expanded));
-    toggle.textContent = expanded ? "查看全部 ↓" : "收起 ↑";
-  });
   content.addEventListener("focusin", event => {
     if (event.target.matches("[data-slide]")) select(event.target);
   });

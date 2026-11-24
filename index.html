@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CAMERICH 锐驰</title>
-  <link rel="stylesheet" href="styles.css?v=4a479ed2076c">
+  <link rel="stylesheet" href="styles.css?v=1e36f71ddfc5">
   <script defer src="assets/gsap.min.js"></script>
-  <script defer src="pages.js?v=d0e86089ca50"></script>
-  <script defer src="prototype.js?v=3b2950af7c12"></script>
-  <script defer src="views.js?v=c22a816502a6"></script>
+  <script defer src="pages.js?v=7b473c302437"></script>
+  <script defer src="prototype.js?v=1cd85fec3a14"></script>
+  <script defer src="views.js?v=a955aeac36a9"></script>
 </head>
 <body>
   <section id="home" class="hero grid" aria-label="品牌首屏">
@@ -28,9 +28,9 @@
       <button type="button" data-menu="products" aria-expanded="false" aria-controls="submenu">产品目录↓</button>
       <a href="#academy">学院系列</a>
       <a href="#system">X™ System</a>
-      <button type="button" data-menu="exhibitions" aria-expanded="false" aria-controls="submenu">展览 &amp; 案例↓</button>
+      <button type="button" data-menu="exhibitions" aria-expanded="false" aria-controls="submenu">事件 &amp; 案例↓</button>
       <button type="button" data-menu="campus" aria-expanded="false" aria-controls="submenu">锐驰园区↓</button>
-      <button type="button" data-menu="creators" aria-expanded="false" aria-controls="submenu">创作者↓</button>
+      <a href="#creators">创作者</a>
       <a href="#about">关于锐驰</a>
       <span class="language">中/英</span>
     </nav>
@@ -41,7 +41,7 @@
   </header>
   <main id="homepage" class="homepage">
     <section class="home-intro grid" aria-label="锐驰品牌理念">
-      <p>一段关于锐驰品牌理念与设计语言的概述文本，具体内容根据实际需求进行调整，行数限制在2-4行左右。</p>
+      <p>一段关于锐驰底层“品牌思想”或“品牌愿景”的概述文本，直接传递锐驰更人文的一面，非官方无情感描述。行数限制在2-4行左右。</p>
       <a href="#about">更多关于锐驰 →</a>
     </section>
     <section class="home-products" aria-label="主线产品">
@@ -55,6 +55,8 @@
         <img src="assets/home-line-3.svg" alt="">
         <span>学院系列<br>点击跳转学院系列子页面</span>
       </a>
+      <div class="home-academy-copy"><p><strong class="home-copy-title">小标题</strong></p><p>一段/一句概述文本，可以考虑以“研究”或“探索”为核心描述。不以单独产品为主。<br><a href="#academy">学院系列页面 →</a></p></div>
+      <p class="home-system-copy"><strong class="home-copy-title">小标题</strong>一段/一句概述文本，可以考虑以“模块化”“延展性”为核心描述，而非 X™ System 技术信息。<br><br><a href="#system">X™ System 页面 →</a></p>
       <a class="home-feature system-feature" href="#system">
         <img src="assets/home-line-4.svg" alt="">
         <span>X™ System<br>点击跳转 X™ System 页面</span>
@@ -64,7 +66,7 @@
   <main id="catalog" class="catalog" aria-label="产品目录" hidden>
     <div class="catalog-content grid">
     <aside class="catalog-side" aria-label="产品品类">
-      <h2>产品</h2>
+      <h2>产品目录</h2>
       <div class="filters"></div>
     </aside>
     <div class="catalog-cover">各类别氛围图</div>
@@ -72,7 +74,7 @@
     <p id="filter-status" class="sr-only" role="status"></p>
     </div>
     <footer class="footer grid">
-      <div class="footer-contact"><strong><a href="#about/contact">联系我们 →</a></strong><p><a data-view="template" data-title="咨询">咨询 →</a><br><a href="#campus/beijing">北京研发园区 →</a></p></div>
+      <div class="footer-contact"><strong><a href="#about/contact">联系我们 →</a></strong><p><a data-view="template" data-title="咨询表单">咨询表单 →</a><br><a href="#campus/beijing">北京研发园区 →</a></p></div>
       <div class="footer-social"><strong>关注</strong><p><a data-view="template">Instagram →</a><br><a data-view="template">微信公众号 →</a><br><a data-view="template">小红书 →</a></p></div>
       <div class="footer-download"><strong><a data-view="template">资料下载 →</a></strong></div>
       <div class="footer-brand">CAMERICH</div>
@@ -82,6 +84,7 @@
   <main id="academy" class="direct-page" hidden>
     <div class="section-page grid">
     <h1>学院系列</h1>
+    <div class="academy-cover-names" data-active="1"><a href="#academy/designer-1">阿尔瓦罗·西扎</a><a href="#academy/designer-2">张轲</a></div>
     <div class="section-cover"><span>学院系列 头图<br>可轮播</span></div>
     <p class="section-copy">一段关于学院系列的概述文本，具体内容根据实际需求进行调整。一段关于学院系列的概述文本，具体内容根据实际需求进行调整。</p>
     </div>
@@ -91,17 +94,19 @@
     <h1>X™ System</h1>
     <div class="section-cover"><span>X™ System 头图</span></div>
     <p class="section-copy">一段关于X™ System的概述文本，具体内容根据实际需求进行调整。一段关于X™ System的概述文本，具体内容根据实际需求进行调整。</p>
-    <a class="section-custom" href="#system/custom">定制 →</a>
+    <a class="section-custom" href="https://rcjiaju.66.fractaltest.cn/designer?new=select">定制 →</a>
     </div>
   </main>
   <main id="about" class="direct-page" aria-label="关于锐驰" hidden>
-    <div class="section-page grid">
-    <h1>关于锐驰</h1>
-    <p class="section-copy">一段关于锐驰的概述文本，具体内容根据实际需求进行调整。一段关于锐驰的概述文本，具体内容根据实际需求进行调整。</p>
-    <div class="section-cover"><span>锐驰产品集合图</span></div>
+    <div class="section-page about-hero grid">
+      <h1 class="about-wordmark">CAMERICH</h1>
+      <div class="about-hero-copy">
+        <p>一段品牌官方介绍，具体内容根据实际需求调整。一段品牌官方介绍，具体内容根据实际需求调整。</p>
+        <p>一段品牌官方介绍，具体内容根据实际需求调整。一段品牌官方介绍，具体内容根据实际需求调整。</p>
+      </div>
     </div>
   </main>
-  <main id="exhibitions" class="indexed-page" aria-label="展览 &amp; 案例" hidden></main>
+  <main id="exhibitions" class="indexed-page" aria-label="事件 &amp; 案例" hidden></main>
   <main id="creators" class="indexed-page" aria-label="创作者" hidden></main>
   <main id="campus" class="indexed-page" aria-label="锐驰园区" hidden></main>
   <dialog class="content-preview" aria-label="内容预览">

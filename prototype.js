@@ -68,18 +68,18 @@ document.addEventListener("visibilitychange", startSlideshow);
 showSlide(0);
 startSlideshow();
 
-const products = ["全部", "沙发", "休闲椅", "餐桌", "餐椅", "书桌", "床", "柜子", "配品"];
-const startsProductGroup = index => [1, 3, 5, 7].includes(index);
+const products = ["沙发", "休闲椅", "餐桌", "餐椅", "书桌", "床", "柜子", "配品", "全部"];
+const startsProductGroup = index => [2, 4, 6, 8].includes(index);
 const menus = {
   products,
-  exhibitions: ["展览", "案例"],
-  campus: ["锐驰北京\n研发园区", "锐驰嘉兴\n超级工厂", "园区活动", "驻地计划"],
-  creators: ["产品", "建筑", "平面", "文化"],
+  exhibitions: ["事件", "案例"],
+  campus: ["锐驰北京\n研发园区", "锐驰嘉兴\n超级工厂", "园区活动", "驻地计划", "came\ncamp)us("],
+  creators: ["产品", "建筑", "平面", "文化", "展览"],
 };
 const sectionKeys = {
   exhibitions: ["exhibition", "case"],
-  campus: ["beijing", "jiaxing", "events", "residency"],
-  creators: ["product", "architecture", "graphic", "culture"],
+  campus: ["beijing", "jiaxing", "events", "residency", "came-campus"],
+  creators: ["product", "architecture", "graphic", "culture", "exhibition"],
 };
 
 const filterList = document.querySelector(".filters");
@@ -89,8 +89,8 @@ const catalog = document.querySelector("#catalog");
 const catalogCover = document.querySelector(".catalog-cover");
 let activeCategory;
 let hasChosenProductCategory = false;
-const sampleCategories = [...products.slice(1), "沙发", "休闲椅", "餐椅"];
-for (const category of products.slice(1)) sampleCategories.push(...Array(8).fill(category));
+const sampleCategories = [...products.slice(0, -1), "沙发", "休闲椅", "餐椅"];
+for (const category of products.slice(0, -1)) sampleCategories.push(...Array(8).fill(category));
 const cardTemplate = document.createElement("template");
 cardTemplate.innerHTML = `
   <article class="card">
@@ -99,7 +99,7 @@ cardTemplate.innerHTML = `
       <img src="assets/card-line.svg" width="37.5" height="7.36396" alt="">
       <span>产品白底图<br>点击跳转详情页</span>
     </span>
-    <span class="card-caption">产品名称，点击跳转详情页→</span>
+    <span class="card-caption">产品名，点击跳转详情页→</span>
     </button>
   </article>
 `;
@@ -296,7 +296,7 @@ function openMenu(button) {
   if (button.dataset.menu === "products") {
     const heading = document.createElement("span");
     heading.className = "menu-heading";
-    heading.textContent = "产品";
+    heading.textContent = "产品目录";
     const filters = document.createElement("div");
     filters.className = "filters";
     filters.append(...items);
@@ -384,7 +384,14 @@ for (let index = 1; index <= 5; index++) {
   caption.append(document.createTextNode(`主线产品 ${index} 场景图`),
     document.createElement("br"), document.createTextNode("点击可跳转产品详情页"));
   scene.append(line, caption);
-  scenes.append(scene);
+  if (index === 2) {
+    const slot = document.createElement("div");
+    slot.className = "home-scene-with-copy";
+    const copy = document.createElement("p");
+    copy.innerHTML = '<strong class="home-copy-title">小标题</strong>一段/一句概述文本，可以考虑以“日常”或“从容生活状态”为核心描述，不以产品为主要叙事逻辑。';
+    slot.append(scene, copy);
+    scenes.append(slot);
+  } else scenes.append(scene);
 }
 
 const footer = catalog.querySelector(".footer").cloneNode(true);
@@ -392,6 +399,49 @@ footer.classList.add("grid");
 homepage.append(footer);
 for (const page of pages.slice(1)) page.append(footer.cloneNode(true));
 
+function addTagFilters(section, labels, single = false) {
+  const group = document.createElement("div");
+  group.className = "tag-filters";
+  group.setAttribute("role", "group");
+  group.setAttribute("aria-label", "筛选");
+  const cards = section.querySelectorAll("[data-card-tags]");
+  function update() {
+    const selected = buttons.filter(button => button.getAttribute("aria-pressed") === "true").map(button => button.dataset.tag);
+    group.classList.toggle("has-selection", selected.length > 0);
+    for (const button of buttons) button.lastElementChild.textContent = selected.includes(button.dataset.tag) ? "−" : "+";
+    for (const card of cards) {
+      card.hidden = selected.length > 0 && !card.dataset.cardTags.split(",").some(tag => selected.includes(tag));
+      const expanded = card.querySelector(".creator-toggle[aria-expanded='true']");
+      if (card.hidden && expanded) expanded.click();
+    }
+    queueScrollEffects();
+  }
+  const buttons = labels.map(label => {
+    const button = makeButton("");
+    button.dataset.tag = label;
+    button.setAttribute("aria-pressed", "false");
+    const sign = document.createElement("span");
+    sign.textContent = "+";
+    sign.setAttribute("aria-hidden", "true");
+    button.append(label + " ", sign);
+    button.addEventListener("click", () => {
+      const selected = button.getAttribute("aria-pressed") !== "true";
+      if (single) {
+        for (const other of buttons) other.setAttribute("aria-pressed", "false");
+      }
+      button.setAttribute("aria-pressed", String(selected));
+      update();
+    });
+    return button;
+  });
+  group.append(...buttons);
+  return { group, select(label) {
+    for (const button of buttons) button.setAttribute("aria-pressed", String(button.dataset.tag === label));
+    update();
+  }};
+}
+
+let creatorFilters;
 const indexedNavigation = new Map();
 for (const [pageId, keys] of Object.entries(sectionKeys)) {
   const page = document.getElementById(pageId);
@@ -403,7 +453,7 @@ for (const [pageId, keys] of Object.entries(sectionKeys)) {
     heading.textContent = "创作者";
     sidebar.append(heading);
   }
-  const entries = keys.map((key, index) => {
+  const entries = (pageId === "creators" ? [keys[0]] : keys).map((key, index) => {
     const link = document.createElement("a");
     const label = document.createElement("span");
     link.href = `#${pageId}/${key}`;
@@ -413,8 +463,20 @@ for (const [pageId, keys] of Object.entries(sectionKeys)) {
       event.preventDefault();
       navigateTo(link.hash);
     });
-    sidebar.append(link);
-    return { key, link, label, section: page.querySelector(`[data-section="${key}"]`) };
+    const section = page.querySelector(`[data-section="${key}"]`);
+    if (pageId === "creators") {
+      creatorFilters = addTagFilters(section, menus.creators);
+      sidebar.append(creatorFilters.group);
+    } else {
+      sidebar.append(link);
+      if (pageId === "campus" && key === "events") {
+        const { group } = addTagFilters(section, ["北京园区", "嘉兴园区"], true);
+        group.inert = true;
+        sidebar.append(group);
+        return { key, link, label, section, filters: group };
+      }
+    }
+    return { key, link, label, section };
   });
   const summary = document.createElement("p");
   summary.className = "sidebar-summary";
@@ -442,13 +504,13 @@ const moveHomeTrack = engine?.quickTo(homeTrack, "x", { duration: 0.3, ease: "po
 function syncSummary(entries, summary, active, anchor, jumped = false) {
   let copy = "";
   if (currentPage.id === "creators") {
-    if (creatorEntryY !== undefined && Math.abs(scrollY - creatorEntryY) > 100) creatorEntryY = undefined;
+    if (creatorEntryY !== undefined && Math.abs(scrollY - creatorEntryY) > 4) creatorEntryY = undefined;
     if (creatorEntryY !== undefined) copy = entries[0].summary;
   } else if (active.summary) {
     // The link setup replaces cover buttons with anchors after the sidebar is built.
-    const trigger = active.section.querySelector(active.key === "residency" ? ".creator-toggle" : ".campus-cover");
+    const trigger = active.section.querySelector(".campus-cover, .residency-cover");
     const bounds = (trigger || active.section).getBoundingClientRect();
-    const end = trigger
+    const end = trigger || active.key === "came-campus"
       ? bounds.bottom
       : Math.min(bounds.bottom, bounds.top + innerHeight - anchor);
     if (jumped || (bounds.top <= anchor && end > anchor)) copy = active.summary;
@@ -481,31 +543,41 @@ function syncSidebar(forceLayout = false, fromScroll = false, target) {
   const { entries, summary } = index;
   const threshold = section => parseFloat(getComputedStyle(section).scrollMarginTop) + 2;
   const lead = fromScroll ? Math.min(320, Math.max(180, innerHeight * 0.25)) : 0;
-  const currentAt = offset => entries.findLast(entry => {
-    const start = threshold(entry.section);
-    const activationLine = entry.key === "residency" && offset > 0
-      ? Math.max(start + offset, innerHeight * 0.62)
-      : start + offset;
-    return entry.section.getBoundingClientRect().top <= activationLine;
-  }) || entries[0];
+  const activationLine = (entry, offset) => {
+    const start = threshold(entry.section) + offset;
+    if (offset && entry.key === "residency") return threshold(entry.section) + 24;
+    if (offset && entry.key === "came-campus") return Math.max(start, innerHeight * 0.75);
+    return start;
+  };
+  const currentAt = offset => entries.findLast(entry =>
+    entry.section.getBoundingClientRect().top <= activationLine(entry, offset)
+  ) || entries[0];
   const selectedEntry = entries.find(entry => entry.section === target);
   const active = selectedEntry || currentAt(lead);
+  const events = entries.find(entry => entry.filters);
+  if (events) {
+    events.filters.style.setProperty("--activity-label-delay", engine && !motion.matches ? `${navMotion.duration}s` : "0s");
+    events.filters.inert = active !== events;
+    events.filters.toggleAttribute("data-visible", active === events);
+  }
   for (const entry of entries) {
-    const { link, label } = entry;
+    const { link, label, filters } = entry;
+    if (!link.isConnected) continue;
     const selected = entry === active;
-    if (!forceLayout && selected === link.hasAttribute("aria-current")) continue;
+    const wasSelected = link.hasAttribute("aria-current");
+    if (!forceLayout && selected === wasSelected) continue;
     if (selected) link.setAttribute("aria-current", "location");
     else link.removeAttribute("aria-current");
     const x = selected ? Math.max(0, link.clientWidth - label.offsetWidth) : 0;
-    if (engine && !motion.matches) {
-      engine.to(label, { ...navMotion, x });
-    } else {
-      engine?.killTweensOf(label);
-      label.style.transform = `translateX(${x}px)`;
+    for (const element of filters ? [label, filters] : [label]) {
+      engine?.killTweensOf(element, "x");
+      if (engine && !motion.matches) {
+        const delay = filters && wasSelected && !selected ? 0.32 : 0;
+        engine.to(element, { ...navMotion, delay, x });
+      } else element.style.transform = `translateX(${x}px)`;
     }
   }
-  const visibleSection = selectedEntry || currentAt(0);
-  syncSummary(entries, summary, visibleSection, threshold(visibleSection.section), Boolean(selectedEntry));
+  syncSummary(entries, summary, active, activationLine(active, lead), Boolean(selectedEntry));
 }
 
 function updateScrollEffects() {
@@ -574,8 +646,13 @@ function renderPage() {
     header.inert = false;
     header.removeAttribute("data-travelling");
     if (visiblePage === catalog) filterProducts(activeCategory);
-    const target = [...visiblePage.querySelectorAll("[data-section]")].find(section => section.dataset.section === sectionId);
-    target?.scrollIntoView({ block: "start" });
+    if (id === "creators") {
+      creatorFilters.select(menus.creators[sectionKeys.creators.indexOf(sectionId)]);
+    }
+    const targetId = id === "creators" && sectionId ? "product" : sectionId;
+    const target = [...visiblePage.querySelectorAll("[data-section]")].find(section => section.dataset.section === targetId);
+    const smoothDesignerJump = id === "academy" && !enteringPage && target?.matches(".academy-designer") && !motion.matches;
+    target?.scrollIntoView({ block: "start", behavior: smoothDesignerJump ? "smooth" : "instant" });
     if (enteringPage && id === "creators") {
       creatorEntryY = scrollY;
       const summary = indexedNavigation.get(visiblePage).summary;
@@ -615,6 +692,17 @@ navBrand.addEventListener("click", event => {
 });
 history.scrollRestoration = "manual";
 window.addEventListener("hashchange", renderPage);
+nav.querySelector('a[href="#creators"]').addEventListener("click", event => {
+  if (location.hash !== "#creators" || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  renderPage();
+});
+document.querySelector(".academy-cover-names").addEventListener("click", event => {
+  const link = event.target.closest("a");
+  if (link?.hash !== location.hash || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  renderPage();
+});
 window.addEventListener("scroll", queueScrollEffects, { passive: true });
 window.addEventListener("resize", () => { syncSidebar(true, true); queueScrollEffects(); });
 motion.addEventListener("change", () => { syncSidebar(true, true); queueScrollEffects(); });

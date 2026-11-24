@@ -306,7 +306,7 @@
     if (document.hidden || document.querySelector("#system").hidden ||
         document.querySelector(".content-preview").open ||
         window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!systemGallery.matches(":hover, :focus-within")) {
+    if (!systemGallery.querySelector(".thumbs").matches(":hover, :has(:focus-visible)")) {
       const current = systemThumbs.findIndex(thumb => thumb.getAttribute("aria-pressed") === "true");
       selectSystemSlide(systemThumbs[(current + 1) % systemThumbs.length]);
     }

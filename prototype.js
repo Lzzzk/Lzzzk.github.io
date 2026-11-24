@@ -186,7 +186,6 @@ const submenuContent = submenu.querySelector(".submenu-content");
 const thumbnail = submenu.querySelector(".nav-thumbnail");
 const navItems = nav.querySelectorAll("[data-menu]");
 let openedBy;
-let menuOpenedByClick = false;
 let menuCloseTimer;
 let menuClosing = false;
 const menuFade = { duration: 0.32, ease: "power2.inOut", overwrite: "auto" };
@@ -217,7 +216,6 @@ function closeMenu(animated = false) {
     menuClosing = false;
     openedBy?.setAttribute("aria-expanded", "false");
     openedBy = undefined;
-    menuOpenedByClick = false;
     hideThumbnail();
     submenu.hidden = true;
     submenu.inert = false;
@@ -258,7 +256,6 @@ function openMenu(button) {
   if (openedBy === button) return;
   openedBy?.setAttribute("aria-expanded", "false");
   hideThumbnail();
-  menuOpenedByClick = false;
   openedBy = button;
   button.setAttribute("aria-expanded", "true");
   nav.dataset.expanded = button.dataset.menu;
@@ -319,14 +316,15 @@ for (const item of navItems) {
   item.addEventListener("pointerenter", event => {
     if (event.pointerType === "mouse") openMenu(item);
   });
-  item.addEventListener("click", event => {
-    if (openedBy === item && menuOpenedByClick && !menuClosing) {
-      closeMenu(true);
-      return;
-    }
+  item.addEventListener("click", () => {
+    const page = item.dataset.menu === "products" ? "catalog" : item.dataset.menu;
+    navigateTo(`#${page}`);
+  });
+  item.addEventListener("keydown", event => {
+    if (event.key !== "ArrowDown") return;
+    event.preventDefault();
     openMenu(item);
-    menuOpenedByClick = true;
-    if (event.detail === 0) submenuContent.querySelector("a, button")?.focus();
+    submenuContent.querySelector("a, button")?.focus();
   });
 }
 

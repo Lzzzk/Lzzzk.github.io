@@ -561,6 +561,7 @@ function syncSidebar(forceLayout = false, fromScroll = false, target) {
   const active = selectedEntry || currentAt(lead);
   const previous = entries.find(entry => entry.link.hasAttribute("aria-current"));
   if (previous && previous !== active) {
+    if (previous.key === "came-campus") previous.section.dispatchEvent(new Event("resume-edition-carousel"));
     if (previous.clearFilters) previous.clearFilters();
     else resetHorizontalPagers(previous.section);
   }
@@ -657,6 +658,7 @@ function renderPage() {
   if (enteringPage && currentPage) {
     const currentEntries = indexedNavigation.get(currentPage)?.entries;
     currentEntries?.find(entry => entry.clearFilters)?.clearFilters();
+    currentEntries?.find(entry => entry.key === "came-campus")?.section.dispatchEvent(new Event("resume-edition-carousel"));
     resetHorizontalPagers(currentPage);
   }
   if (currentPage?.id === "campus" && (id !== "campus" || sectionId !== "residency")) {

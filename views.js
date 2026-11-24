@@ -79,7 +79,7 @@
     const footer = document.querySelector("#catalog .footer").cloneNode(true);
     footer.classList.add("grid");
     return `${nav.outerHTML}<div class="grid product-view">
-      ${previewPicture(title, "产品大图<br>可点击右侧产品画廊切换/或轮播", "product-view-image")}
+      <div class="product-view-image">${block("产品大图<br>可点击右侧产品画廊切换/或轮播")}</div>
       <div class="product-view-intro">
         <h1>${escape(title)}</h1>
         <p>${productCopy}<br>${productCopy}</p>
@@ -188,11 +188,7 @@
     }
     const label = content.querySelector("[data-image-number]");
     if (label) label.textContent = number;
-    const productImage = content.querySelector(".product-view-image");
-    if (productImage) {
-      productImage.dataset.viewImage = number;
-      productImage.href = urlFor("b", productImage.dataset.title, number);
-    }
+
   }
 
   document.addEventListener("click", event => {

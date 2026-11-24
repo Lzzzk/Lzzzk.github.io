@@ -426,13 +426,46 @@ function setupPager(group) {
     ${section("came-campus", "came camp)us(", `
       <p class="indexed-note">${intro("came camp)us(").repeat(2)}</p>
       ${campusProfiles("驻地联合发起方", "发起工作室名称")}
-      ${campusProfiles("came camp)us(<br>第1期参与者", "参与者名称", 7)}
-      <div class="campus-row">
-        <h2>came camp)us(<br>第0期 展览</h2>
-        ${image("展览图片<br>点击跳转展览图文画廊", { preview: "event", title: "came camp)us( 第0期 展览", asset: "campus-line-1", ratio: "1" })}
+      <div class="came-editions">
+        <div class="came-edition-controls" role="group" aria-label="选择驻地期数">
+          ${repeat(2, edition => `<button type="button" data-came-choice="${edition}" aria-pressed="${edition === 0}">第 ${edition} 期</button>`)}
+        </div>
+        ${repeat(2, edition => `<div class="came-edition" data-came-edition="${edition}"${edition ? " inert" : " data-current"}>
+          <div class="campus-row came-exhibition">
+            <h2>展览</h2>
+            ${image("展览图片<br>点击跳转展览图文画廊", { preview: "event", title: `came camp)us( 第${edition}期 展览`, asset: "campus-line-1", ratio: "1", className: edition ? "alternate-cover" : "" })}
+          </div>
+          ${campusProfiles("参与者", `第 ${edition} 期参与者名称`, edition === 0 ? 2 : 7)}
+        </div>`)}
       </div>`)}
   </div>`);
 
+
+  const cameSection = document.querySelector('[data-section="came-campus"]');
+  const cameChoices = [...cameSection.querySelectorAll("[data-came-choice]")];
+  const cameEditions = [...cameSection.querySelectorAll("[data-came-edition]")];
+  let cameIndex = 0;
+  let camePinned = false;
+  function showCameEdition(index) {
+    cameIndex = index;
+    cameChoices.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
+    cameEditions.forEach((panel, i) => {
+      panel.inert = i !== index;
+      panel.toggleAttribute("data-current", i === index);
+    });
+  }
+  cameChoices.forEach((button, index) => button.addEventListener("click", () => {
+    camePinned = true;
+    showCameEdition(index);
+  }));
+  cameSection.addEventListener("resume-edition-carousel", () => { camePinned = false; });
+  window.setInterval(() => {
+    if (camePinned || document.hidden || cameSection.closest("main").hidden ||
+        document.querySelector(".content-preview").open ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        !document.querySelector('.index-sidebar a[href="#campus/came-campus"][aria-current]')) return;
+    showCameEdition((cameIndex + 1) % cameEditions.length);
+  }, 3600);
 
   document.querySelectorAll(".about-store-group, .campus-event-pager").forEach(setupPager);
 

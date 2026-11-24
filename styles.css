@@ -866,3 +866,5 @@ html:has(.content-preview[open]) { overflow: hidden; }
     .studio-entry .creator-expansion:not([hidden]) { height: 0; opacity: 0; }
   }
 }
+
+html:has(#creators:not([hidden]), #campus:not([hidden])) { overflow-anchor: none; }

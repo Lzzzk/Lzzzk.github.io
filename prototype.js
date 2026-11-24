@@ -403,14 +403,37 @@ function addTagFilters(section, labels, single = false) {
   group.setAttribute("role", "group");
   group.setAttribute("aria-label", "筛选");
   const cards = section.querySelectorAll("[data-card-tags]");
-  function update() {
+  function update(preservePosition = false) {
     const selected = buttons.filter(button => button.getAttribute("aria-pressed") === "true").map(button => button.dataset.tag);
     group.classList.toggle("has-selection", selected.length > 0);
     for (const button of buttons) button.lastElementChild.textContent = selected.includes(button.dataset.tag) ? "−" : "+";
+    const matches = card => !selected.length || card.dataset.cardTags.split(",").some(tag => selected.includes(tag));
+    const readingTop = header.getBoundingClientRect().bottom + 24;
+    let anchor;
+    let anchorTop;
+    if (preservePosition) {
+      const candidates = [...cards].filter(matches);
+      anchor = candidates.find(card => {
+        if (card.hidden) return false;
+        const { top, bottom } = card.getBoundingClientRect();
+        return bottom > readingTop && top < innerHeight;
+      });
+      if (anchor) anchorTop = anchor.getBoundingClientRect().top;
+      else {
+        anchor = candidates[0];
+        anchorTop = Math.max(readingTop, section.getBoundingClientRect().top);
+      }
+    }
+    if (preservePosition && section.closest("#creators")) {
+      section.dispatchEvent(new Event("collapse-creator-card", { bubbles: true }));
+    }
     for (const card of cards) {
-      card.hidden = selected.length > 0 && !card.dataset.cardTags.split(",").some(tag => selected.includes(tag));
+      card.hidden = !matches(card);
       const expanded = card.querySelector(".creator-toggle[aria-expanded='true']");
       if (card.hidden && expanded) expanded.click();
+    }
+    if (anchor) {
+      window.scrollBy({ top: anchor.getBoundingClientRect().top - anchorTop, behavior: "instant" });
     }
     queueScrollEffects();
   }
@@ -428,7 +451,7 @@ function addTagFilters(section, labels, single = false) {
         for (const other of buttons) other.setAttribute("aria-pressed", "false");
       }
       button.setAttribute("aria-pressed", String(selected));
-      update();
+      update(true);
     });
     return button;
   });
@@ -535,6 +558,12 @@ function syncSummary(entries, summary, active, anchor, jumped = false) {
   } else displayCopy();
 }
 
+const residencySection = document.querySelector('#campus [data-section="residency"]');
+function collapseResidencyCards(detail) {
+  if (!residencySection.querySelector(".creator-toggle[aria-expanded='true']")) return;
+  residencySection.dispatchEvent(new CustomEvent("collapse-creator-card", { bubbles: true, detail }));
+}
+
 function syncSidebar(forceLayout = false, fromScroll = false, target) {
   const index = indexedNavigation.get(currentPage);
   if (!index) return;
@@ -552,6 +581,9 @@ function syncSidebar(forceLayout = false, fromScroll = false, target) {
   ) || entries[0];
   const selectedEntry = entries.find(entry => entry.section === target);
   const active = selectedEntry || currentAt(lead);
+  if (currentPage.id === "campus" && active.key !== "residency") {
+    collapseResidencyCards({ anchor: active.key === "came-campus" ? active.section : undefined });
+  }
   const events = entries.find(entry => entry.filters);
   if (events) {
     events.filters.style.setProperty("--activity-label-delay", engine && !motion.matches ? `${navMotion.duration}s` : "0s");
@@ -634,6 +666,9 @@ function renderPage() {
   const [id, sectionId] = location.hash.slice(1).split("/");
   const visiblePage = pages.find(page => page.id === id);
   const enteringPage = currentPage !== visiblePage;
+  if (currentPage?.id === "campus" && (id !== "campus" || sectionId !== "residency")) {
+    collapseResidencyCards({ instant: true });
+  }
   currentPage = visiblePage;
   hero.hidden = homepage.hidden = Boolean(visiblePage);
   for (const page of pages) page.hidden = page !== visiblePage;

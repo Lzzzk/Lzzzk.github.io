@@ -157,40 +157,84 @@
   </div>`);
 
   const cardMotion = new WeakMap();
+  let stopStudioAnchor;
+  function holdStudioAnchor(toggle, top, closingPanel) {
+    const observer = new ResizeObserver(() => {
+      if (toggle.closest("[hidden]")) return stop();
+      window.scrollBy({ top: toggle.getBoundingClientRect().top - top, behavior: "instant" });
+    });
+    const stop = () => {
+      observer.disconnect();
+      clearTimeout(timer);
+      for (const type of ["wheel", "touchmove", "pointerdown", "keydown"]) window.removeEventListener(type, stop, true);
+      stopStudioAnchor = undefined;
+    };
+    const timer = window.setTimeout(stop, 400);
+    stopStudioAnchor = stop;
+    observer.observe(closingPanel);
+    for (const type of ["wheel", "touchmove", "pointerdown", "keydown"]) {
+      window.addEventListener(type, stop, { capture: true, passive: true });
+    }
+  }
   const expansionMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  function setExpanded(button, expanded) {
+    button.setAttribute("aria-expanded", String(expanded));
+    const panel = document.getElementById(button.getAttribute("aria-controls"));
+    panel.hidden = !expanded;
+    if (!button.closest(".studio-entry")) {
+      button.querySelector(".wire-image span").innerHTML = expanded
+        ? "创作者肖像<br>点击收回"
+        : "创作者肖像<br>点击右侧展开详情";
+    }
+    button.querySelector("[data-creator-label]").textContent = button.closest(".studio-entry")
+      ? (expanded ? "工作室名称，收起 ↑" : "工作室名称，下方展开 ↓")
+      : (expanded ? "创作者，收起" : "创作者，右侧展开");
+    return panel;
+  }
+  document.addEventListener("collapse-creator-card", event => {
+    const toggle = event.target.querySelector(".creator-toggle[aria-expanded='true']");
+    if (!toggle) return;
+    for (const card of event.target.querySelectorAll(".creator-toggle")) cardMotion.get(card)?.cancel();
+    stopStudioAnchor?.();
+    const panel = document.getElementById(toggle.getAttribute("aria-controls"));
+    const { instant, anchor } = event.detail || {};
+    const anchorTop = anchor?.getBoundingClientRect().top;
+    if (instant) panel.style.transition = "none";
+    setExpanded(toggle, false);
+    if (instant) {
+      panel.getBoundingClientRect();
+      panel.style.removeProperty("transition");
+    } else if (anchor && !expansionMotion.matches) {
+      holdStudioAnchor(anchor, anchorTop, panel);
+    }
+  });
   document.addEventListener("click", event => {
     const toggle = event.target.closest(".creator-toggle");
     if (!toggle) return;
+    stopStudioAnchor?.();
     const page = toggle.closest("main");
     const previous = page.querySelector(".creator-toggle[aria-expanded='true']");
-    const cards = [...page.querySelectorAll(".creator-toggle")];
+    const preservePosition = !toggle.closest("[hidden]");
+    const anchorTop = preservePosition ? toggle.getBoundingClientRect().top : 0;
+    const cards = [...page.querySelectorAll(".creator-toggle")].filter(card => !card.closest("[hidden]"));
     const first = expansionMotion.matches ? [] : cards.map(card => card.getBoundingClientRect());
     for (const card of cards) cardMotion.get(card)?.cancel();
-    function setExpanded(button, expanded) {
-      button.setAttribute("aria-expanded", String(expanded));
-      const panel = document.getElementById(button.getAttribute("aria-controls"));
-      panel.hidden = !expanded;
-      if (!button.closest(".studio-entry")) {
-        button.querySelector(".wire-image span").innerHTML = expanded
-          ? "创作者肖像<br>点击收回"
-          : "创作者肖像<br>点击右侧展开详情";
-      }
-      button.querySelector("[data-creator-label]").textContent = button.closest(".studio-entry")
-        ? (expanded ? "工作室名称，收起 ↑" : "工作室名称，下方展开 ↓")
-        : (expanded ? "创作者，收起" : "创作者，右侧展开");
-      return panel;
-    }
-    if (previous) setExpanded(previous, false);
+    const closingPanel = previous ? setExpanded(previous, false) : null;
     let panel;
     if (previous !== toggle) {
       panel = setExpanded(toggle, true);
-      const bounds = toggle.getBoundingClientRect();
-      const navBottom = document.querySelector(".site-header").getBoundingClientRect().bottom;
-      if (bounds.top >= innerHeight - 48 || bounds.bottom <= navBottom) {
-        toggle.scrollIntoView({ block: "start" });
-      }
+    }
+    if (preservePosition) {
+      window.scrollBy({ top: toggle.getBoundingClientRect().top - anchorTop, behavior: "instant" });
     }
     if (expansionMotion.matches) return;
+    if (toggle.closest(".studio-entry")) {
+      if (preservePosition && closingPanel && previous !== toggle &&
+          (previous.compareDocumentPosition(toggle) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+        holdStudioAnchor(toggle, anchorTop, closingPanel);
+      }
+      return;
+    }
     const last = cards.map(card => card.getBoundingClientRect());
     const timing = { duration: 340, easing: "cubic-bezier(.22,.61,.36,1)" };
     for (const [index, card] of cards.entries()) {
@@ -200,7 +244,6 @@
         cardMotion.set(card, card.animate([{ transform: `translate(${x}px, ${y}px)` }, { transform: "none" }], timing));
       }
     }
-    if (toggle.closest(".studio-entry")) return;
     for (const child of panel?.children || []) {
       child.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }],
         { ...timing, delay: 110, fill: "backwards" });

@@ -59,6 +59,12 @@ for (const [index] of slideLabels.entries()) {
   controls.append(button);
 }
 
+attachHorizontalPaging(hero, direction => {
+  showSlide((activeSlide + direction + slideLabels.length) % slideLabels.length);
+  startSlideshow();
+  return true;
+}, { enabled: () => !hero.hidden });
+
 controls.addEventListener("pointerenter", stopSlideshow);
 controls.addEventListener("pointerleave", startSlideshow);
 controls.addEventListener("focusin", stopSlideshow);
@@ -68,29 +74,25 @@ document.addEventListener("visibilitychange", startSlideshow);
 showSlide(0);
 startSlideshow();
 
-const products = ["沙发", "休闲椅", "餐桌", "餐椅", "书桌", "床", "柜子", "配品", "全部"];
-const startsProductGroup = index => [2, 4, 6, 8].includes(index);
+const products = ["沙发", "休闲椅", "餐桌", "餐椅", "书桌", "床", "柜子", "配品"];
+const productKeys = ["sofas", "lounge-chairs", "dining-tables", "dining-chairs", "desks", "beds", "cabinets", "accessories"];
+const startsProductGroup = index => [2, 4, 6].includes(index);
 const menus = {
   products,
+  catalog: products,
   exhibitions: ["事件", "案例"],
   campus: ["锐驰北京\n研发园区", "锐驰嘉兴\n超级工厂", "园区活动", "驻地计划", "came\ncamp)us("],
   creators: ["产品", "建筑", "平面", "文化", "展览"],
 };
 const sectionKeys = {
+  catalog: productKeys,
   exhibitions: ["exhibition", "case"],
   campus: ["beijing", "jiaxing", "events", "residency", "came-campus"],
   creators: ["product", "architecture", "graphic", "culture", "exhibition"],
 };
 
-const filterList = document.querySelector(".filters");
-const cardList = document.querySelector(".cards");
-const status = document.querySelector("#filter-status");
 const catalog = document.querySelector("#catalog");
-const catalogCover = document.querySelector(".catalog-cover");
-let activeCategory;
-let hasChosenProductCategory = false;
-const sampleCategories = [...products.slice(0, -1), "沙发", "休闲椅", "餐椅"];
-for (const category of products.slice(0, -1)) sampleCategories.push(...Array(8).fill(category));
+const catalogBody = catalog.querySelector(".indexed-body");
 const cardTemplate = document.createElement("template");
 cardTemplate.innerHTML = `
   <article class="card">
@@ -104,59 +106,33 @@ cardTemplate.innerHTML = `
   </article>
 `;
 
-for (const category of sampleCategories) {
-  const card = cardTemplate.content.firstElementChild.cloneNode(true);
-  card.dataset.category = category;
-  cardList.append(card);
-}
-
-for (const [index, category] of products.entries()) {
-  const button = makeButton(category);
-  button.className = "filter";
-  if (startsProductGroup(index)) button.classList.add("spaced");
-  button.addEventListener("click", () => filterProducts(category, true));
-  filterList.append(button);
-}
-
-function alignFilter(button, selected) {
-  if (catalog.hidden) return;
-  const rightEdge = filterList.clientWidth - button.offsetWidth;
-  const narrow = window.matchMedia("(max-width: 720px)").matches;
-  const x = selected && hasChosenProductCategory && !narrow ? Math.max(0, rightEdge) : 0;
-  if (engine && !motion.matches) {
-    engine.to(button, { ...navMotion, x });
-  } else {
-    engine?.killTweensOf(button);
-    button.style.transform = `translateX(${x}px)`;
-  }
-}
-
-function filterProducts(category, chosen = false) {
-  if (chosen) hasChosenProductCategory = true;
-  if (activeCategory !== category) {
-    const color = category === "全部" ? "#dcdcdc" :
-      (activeCategory === "全部" || catalogCover.dataset.shade !== "dark" ? "#bdbdbd" : "#dcdcdc");
-    catalogCover.dataset.shade = color === "#bdbdbd" ? "dark" : "light";
-    if (engine && !motion.matches && !catalog.hidden) {
-      engine.to(catalogCover, { backgroundColor: color, duration: 0.8, overwrite: true });
-    } else {
-      catalogCover.style.backgroundColor = color;
+productKeys.forEach((key, index) => {
+  const section = document.createElement("section");
+  section.className = "indexed-section catalog-category";
+  section.dataset.section = key;
+  section.setAttribute("aria-label", products[index]);
+  const cover = document.createElement("div");
+  cover.className = "catalog-cover";
+  cover.textContent = `${products[index]}氛围图`;
+  const pager = document.createElement("div");
+  pager.className = "catalog-pager";
+  pager.setAttribute("aria-label", `${products[index]}产品列表`);
+  pager.innerHTML = `<div class="store-viewport"><div class="store-track"></div></div>
+    <div class="store-pagination">${pagerControls}</div>`;
+  const track = pager.querySelector(".store-track");
+  const count = [16, 15, 12, 17][index % 4];
+  for (let start = 0; start < count; start += 9) {
+    const cards = document.createElement("div");
+    cards.className = "cards store-page";
+    for (let index = start; index < Math.min(start + 9, count); index++) {
+      cards.append(cardTemplate.content.firstElementChild.cloneNode(true));
     }
-    activeCategory = category;
+    track.append(cards);
   }
-  for (const button of filterList.children) {
-    const selected = button.textContent === category;
-    button.setAttribute("aria-pressed", String(selected));
-    alignFilter(button, selected);
-  }
-  let count = 0;
-  for (const card of cardList.children) {
-    card.hidden = category !== "全部" && card.dataset.category !== category;
-    if (!card.hidden) count++;
-  }
-  status.textContent = `${category}，${count} 件产品`;
-  if (!catalog.hidden) revealContent([cardList]);
-}
+  section.append(cover, pager);
+  setupPager(pager);
+  catalogBody.append(section);
+});
 
 function revealContent(targets, delay = 0, duration = 0.38) {
   if (!engine || motion.matches || !targets.length) return;
@@ -171,13 +147,6 @@ function navigateTo(hash) {
   if (location.hash !== hash) history.pushState(null, "", new URL(hash, location.href));
   renderPage();
 }
-
-window.addEventListener("resize", () => {
-  for (const button of filterList.children) {
-    alignFilter(button, button.getAttribute("aria-pressed") === "true");
-  }
-});
-filterProducts("全部");
 
 const header = document.querySelector(".site-header");
 const nav = document.querySelector(".nav");
@@ -272,21 +241,19 @@ function openMenu(button) {
       });
       return item;
     }
-    const item = makeButton(label);
+    const item = document.createElement("a");
+    const key = productKeys[index];
+    item.textContent = label;
     item.className = "filter";
     if (startsProductGroup(index)) item.classList.add("spaced");
-    item.setAttribute("aria-pressed", String(label === activeCategory));
-    if (label === activeCategory && hasChosenProductCategory) item.classList.add("filter-offset");
-    if (label === "全部") item.setAttribute("aria-label", "全部产品");
-    item.addEventListener("click", () => {
-      closeMenu();
-      filterProducts(label, true);
-      if (location.hash !== "#catalog") {
-        navigateTo("#catalog");
-        return;
-      }
-      window.scrollTo(0, 0);
-      filterList.querySelector('[aria-pressed="true"]').focus({ preventScroll: true });
+    item.href = `#catalog/${key}`;
+    if (item.hash === location.hash) {
+      item.setAttribute("aria-current", "location");
+      item.classList.add("filter-offset");
+    }
+    item.addEventListener("click", event => {
+      event.preventDefault();
+      navigateTo(item.hash);
     });
     return item;
   });
@@ -412,7 +379,8 @@ function addTagFilters(section, labels, single = false) {
     const readingTop = header.getBoundingClientRect().bottom + 24;
     let anchor;
     let anchorTop;
-    if (fromFilterClick && !returnToTop) {
+    const pager = section.querySelector(".campus-event-pager");
+    if (fromFilterClick && !returnToTop && !pager) {
       const candidates = [...cards].filter(matches);
       anchor = candidates.find(card => {
         if (card.hidden) return false;
@@ -433,6 +401,7 @@ function addTagFilters(section, labels, single = false) {
       const expanded = card.querySelector(".creator-toggle[aria-expanded='true']");
       if (card.hidden && expanded) expanded.click();
     }
+    pager?.dispatchEvent(new Event("pager-filter"));
     if (returnToTop) {
       window.scrollTo({ top: 0, behavior: "instant" });
     } else if (anchor) {
@@ -472,9 +441,9 @@ for (const [pageId, keys] of Object.entries(sectionKeys)) {
   const sidebar = document.createElement("nav");
   sidebar.className = "index-sidebar";
   sidebar.setAttribute("aria-label", `${document.getElementById(pageId).getAttribute("aria-label")}子导航`);
-  if (pageId === "creators") {
+  if (pageId === "creators" || pageId === "catalog") {
     const heading = document.createElement("p");
-    heading.textContent = "创作者";
+    heading.textContent = pageId === "catalog" ? "产品目录" : "创作者";
     sidebar.append(heading);
   }
   const entries = (pageId === "creators" ? [keys[0]] : keys).map((key, index) => {
@@ -492,12 +461,13 @@ for (const [pageId, keys] of Object.entries(sectionKeys)) {
       creatorFilters = addTagFilters(section, menus.creators);
       sidebar.append(creatorFilters.group);
     } else {
+      if (pageId === "catalog" && startsProductGroup(index)) link.classList.add("catalog-nav-spaced");
       sidebar.append(link);
       if (pageId === "campus" && key === "events") {
-        const { group } = addTagFilters(section, ["北京园区", "嘉兴园区"], true);
+        const { group, select } = addTagFilters(section, ["北京园区", "嘉兴园区"], true);
         group.inert = true;
         sidebar.append(group);
-        return { key, link, label, section, filters: group };
+        return { key, link, label, section, filters: group, clearFilters: () => select() };
       }
     }
     return { key, link, label, section };
@@ -573,9 +543,14 @@ function syncSidebar(forceLayout = false, fromScroll = false, target) {
   const { entries, summary } = index;
   const threshold = section => parseFloat(getComputedStyle(section).scrollMarginTop) + 2;
   const lead = fromScroll ? Math.min(320, Math.max(180, innerHeight * 0.25)) : 0;
+  const events = entries.find(entry => entry.filters);
+  const residency = entries.find(entry => entry.key === "residency");
+  const residencyEnd = residency && Math.max(threshold(residency.section),
+    residency.label.getBoundingClientRect().top - events.filters.offsetHeight - parseFloat(getComputedStyle(events.filters).marginTop));
+  const residencyStart = residencyEnd + lead;
   const activationLine = (entry, offset) => {
     const start = threshold(entry.section) + offset;
-    if (offset && entry.key === "residency") return threshold(entry.section) + 24;
+    if (offset && entry === residency) return residencyStart;
     if (offset && entry.key === "came-campus") return Math.max(start, innerHeight * 0.75);
     return start;
   };
@@ -584,10 +559,14 @@ function syncSidebar(forceLayout = false, fromScroll = false, target) {
   ) || entries[0];
   const selectedEntry = entries.find(entry => entry.section === target);
   const active = selectedEntry || currentAt(lead);
+  const previous = entries.find(entry => entry.link.hasAttribute("aria-current"));
+  if (previous && previous !== active) {
+    if (previous.clearFilters) previous.clearFilters();
+    else resetHorizontalPagers(previous.section);
+  }
   if (currentPage.id === "campus" && active.key !== "residency") {
     collapseResidencyCards({ anchor: active.key === "came-campus" ? active.section : undefined });
   }
-  const events = entries.find(entry => entry.filters);
   if (events) {
     events.filters.style.setProperty("--activity-label-delay", engine && !motion.matches ? `${navMotion.duration}s` : "0s");
     events.filters.inert = active !== events;
@@ -664,11 +643,22 @@ function queueScrollEffects() {
   requestAnimationFrame(updateScrollEffects);
 }
 
+function resetHorizontalPagers(container) {
+  for (const pager of container.querySelectorAll("[data-horizontal-pager]")) {
+    pager.dispatchEvent(new Event("pager-reset"));
+  }
+}
+
 function renderPage() {
   closeMenu();
   const [id, sectionId] = location.hash.slice(1).split("/");
   const visiblePage = pages.find(page => page.id === id);
   const enteringPage = currentPage !== visiblePage;
+  if (enteringPage && currentPage) {
+    const currentEntries = indexedNavigation.get(currentPage)?.entries;
+    currentEntries?.find(entry => entry.clearFilters)?.clearFilters();
+    resetHorizontalPagers(currentPage);
+  }
   if (currentPage?.id === "campus" && (id !== "campus" || sectionId !== "residency")) {
     collapseResidencyCards({ instant: true });
   }
@@ -681,7 +671,6 @@ function renderPage() {
     header.style.setProperty("--nav-opacity", 1);
     header.inert = false;
     header.removeAttribute("data-travelling");
-    if (visiblePage === catalog) filterProducts(activeCategory);
     if (id === "creators") {
       creatorFilters.select(menus.creators[sectionKeys.creators.indexOf(sectionId)]);
     }
@@ -706,13 +695,11 @@ function renderPage() {
       }
     }
     syncSidebar(false, false, target);
-    if (visiblePage !== catalog) {
-      if (enteringPage && !target && (id === "academy" || id === "system")) {
-        revealContent([...visiblePage.querySelectorAll(".section-cover, .section-copy, .section-custom")], 0.4, 0.7);
-      } else {
-        const content = visiblePage.querySelector(".indexed-body, .section-page");
-        if (content && (enteringPage || target)) revealContent([content], indexedNavigation.has(visiblePage) ? navMotion.duration : 0);
-      }
+    if (enteringPage && !target && (id === "academy" || id === "system")) {
+      revealContent([...visiblePage.querySelectorAll(".section-cover, .section-copy, .section-custom")], 0.4, 0.7);
+    } else {
+      const content = visiblePage.querySelector(".indexed-body, .section-page");
+      if (content && (enteringPage || target)) revealContent([content], indexedNavigation.has(visiblePage) ? navMotion.duration : 0);
     }
   } else {
     updateScrollEffects();

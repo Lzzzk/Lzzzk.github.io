@@ -1,5 +1,121 @@
 "use strict";
 
+function attachHorizontalPaging(viewport, step, { wheelTarget = viewport, enabled = () => true } = {}) {
+  let lastWheelInput = -Infinity;
+  let lastWheelDelta = 0;
+  let lastTurnAt = -Infinity;
+  let lastTurnDirection = 0;
+  let wheelHandled = false;
+  let wheelDistance = 0;
+  wheelTarget.addEventListener("wheel", event => {
+    if (!enabled() || event.ctrlKey || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+    event.preventDefault();
+    const now = event.timeStamp;
+    const delta = event.deltaX * (event.deltaMode === 0 ? 1 : 40);
+    const direction = Math.sign(delta);
+    const amount = Math.abs(delta);
+    const renewedSwipe = now - lastTurnAt > 150 && amount >= 8 &&
+      (direction !== lastTurnDirection || (lastWheelDelta <= 5 && amount > lastWheelDelta * 2.5));
+    if (now - lastWheelInput > 115 || renewedSwipe) {
+      wheelHandled = false;
+      wheelDistance = 0;
+    }
+    lastWheelInput = now;
+    lastWheelDelta = amount;
+    if (wheelHandled) return;
+    if (Math.sign(wheelDistance) !== direction) wheelDistance = 0;
+    wheelDistance += delta;
+    if (Math.abs(wheelDistance) < 8) return;
+    wheelDistance = 0;
+    if (step(direction)) {
+      wheelHandled = true;
+      lastTurnAt = now;
+      lastTurnDirection = direction;
+    }
+  }, { passive: false });
+  let touchStart;
+  viewport.addEventListener("touchstart", event => {
+    touchStart = event.touches.length === 1 ? event.touches[0] : undefined;
+  }, { passive: true });
+  viewport.addEventListener("touchend", event => {
+    if (!enabled() || !touchStart || event.touches.length) return;
+    const x = touchStart.clientX - event.changedTouches[0].clientX;
+    const y = touchStart.clientY - event.changedTouches[0].clientY;
+    touchStart = undefined;
+    if (Math.abs(x) > Math.max(28, Math.abs(y))) step(Math.sign(x));
+  }, { passive: true });
+  viewport.addEventListener("touchcancel", () => { touchStart = undefined; });
+}
+
+const pagerControls = `<div class="store-pagination-controls">
+  <button type="button" aria-label="上一页">&lt;</button>
+  <span class="sr-only" aria-live="polite" data-store-page>p1</span>
+  <button type="button" aria-label="下一页">&gt;</button>
+</div>`;
+
+function setupPager(group) {
+  group.setAttribute("data-horizontal-pager", "");
+  const details = group.querySelector("details");
+  const pagination = group.querySelector(".store-pagination");
+  const viewport = group.querySelector(".store-viewport");
+  const indicator = document.createElement("div");
+  indicator.className = "pager-cursor";
+  indicator.setAttribute("aria-hidden", "true");
+  indicator.hidden = true;
+  indicator.innerHTML = '<span class="pager-prev">&lt;</span><span data-cursor-page></span><span class="pager-next">&gt;</span>';
+  viewport.append(indicator);
+  const track = group.querySelector(".store-track");
+  const pages = [...track.children];
+  const [previous, next] = pagination.querySelectorAll("button");
+  let current = 0;
+  function selectPage(index) {
+    const count = pages.filter(page => !page.hidden).length;
+    current = Math.min(count - 1, Math.max(0, index));
+    const text = `p${current + 1} / p${count}`;
+    indicator.querySelector("[data-cursor-page]").textContent = `${current + 1} / ${count}`;
+    indicator.toggleAttribute("data-prev", current > 0);
+    indicator.toggleAttribute("data-next", current < count - 1);
+    track.style.setProperty("--store-page", current);
+    pages.forEach((page, i) => { page.inert = i !== current; });
+    pagination.querySelector("[data-store-page]").textContent = text;
+    previous.disabled = current === 0;
+    next.disabled = current === count - 1;
+    pagination.hidden = count < 2 || Boolean(details && !details.open);
+  }
+  selectPage(0);
+  details?.addEventListener("toggle", () => {
+    pagination.hidden = !details.open;
+    if (!details.open) selectPage(0);
+  });
+  previous.addEventListener("click", () => selectPage(current - 1));
+  next.addEventListener("click", () => selectPage(current + 1));
+  viewport.addEventListener("pointermove", event => {
+    if (event.pointerType !== "mouse" || (previous.disabled && next.disabled)) return;
+    indicator.style.left = `${event.clientX}px`;
+    indicator.style.top = `${event.clientY}px`;
+    indicator.hidden = false;
+  });
+  viewport.addEventListener("pointerleave", () => { indicator.hidden = true; });
+  group.addEventListener("pager-reset", () => {
+    indicator.hidden = true;
+    selectPage(0);
+  });
+  group.addEventListener("pager-filter", () => {
+    const cards = [...track.querySelectorAll("[data-card-tags]")].sort((left, right) =>
+      right.querySelector("time").dateTime.localeCompare(left.querySelector("time").dateTime));
+    const visible = cards.filter(card => !card.hidden);
+    const ordered = [...visible, ...cards.filter(card => card.hidden)];
+    ordered.forEach((card, index) => pages[Math.floor(index / 9)].append(card));
+    pages.forEach((page, i) => { page.hidden = i > 0 && i * 9 >= visible.length; });
+    selectPage(0);
+  });
+  attachHorizontalPaging(viewport, direction => {
+    const before = current;
+    selectPage(current + direction);
+    return before !== current;
+  }, { wheelTarget: group, enabled: () => (!details || details.open) && !(previous.disabled && next.disabled) });
+}
+
 (() => {
   const repeat = (count, render) => Array.from({ length: count }, (_, index) => render(index)).join("");
   const intro = subject => `一段关于${subject}的概述文本，具体内容根据实际需求进行调整。`;
@@ -90,16 +206,33 @@
     .filter(([, , , footerLabel]) => footerLabel)
     .map(([, , url, footerLabel]) => socialLink(url, `${footerLabel} →`)).join("<br>");
   add("about", `<div class="page-content about-details">
-    <section class="grid content-grid about-row">
+    <section class="grid content-grid about-row about-network">
       <h2>锐驰全球经销网络</h2>
-      <div class="about-list">
-        <p class="about-network-intro">${intro("锐驰全球经销网络")}</p>
-        ${[["海外门店", 6], ["国内门店", 2]].map(([name, count]) => `
-          <details class="about-stores">
-            <summary class="info-row"><span>${name}</span><span class="about-stores-meta"><span>111家</span><span class="stores-expand">展开 ↓</span><span class="stores-collapse">收起 ↑</span></span></summary>
-            ${repeat(count, () => '<p class="info-row about-store"><span>门店编号</span><span>地址信息地址信息地址信息地址信息，001001</span></p>')}
-          </details>`).join("")}
-      </div>
+      <p class="about-network-intro">${intro("锐驰全球经销网络")}</p>
+      ${["海外门店", "中国门店"].map((name, group) => `
+        <div class="about-store-group">
+          <details class="about-stores" name="about-store-groups">
+            <summary class="store-grid">
+              <span>${name}</span><span class="stores-count">111家</span>
+              <span class="stores-expand">展开 ↓</span><span class="stores-collapse">收起 ↑</span>
+            </summary>
+            <div class="store-viewport">
+              <div class="store-track">
+                ${repeat(5, page => `<div class="store-page"${page ? " inert" : ""}>
+                  ${repeat(5, index => `<p class="store-grid about-store">
+                    ${group === 0 ? "<span>国家</span>" : ""}
+                    <span class="store-city${group ? " store-city-domestic" : ""}">城市</span>
+                    <span class="store-address">地址信息地址信息地址信息地址信息，${String(1001 + group * 25 + page * 5 + index).padStart(6, "0")}</span>
+                    <span class="store-phone">+00 00 0000 0000</span>
+                  </p>`)}
+                </div>`)}
+              </div>
+            </div>
+          </details>
+          <div class="store-pagination store-grid" hidden>
+            ${pagerControls}
+          </div>
+        </div>`).join("")}
     </section>
     <section class="grid content-grid about-row" data-section="contact">
       <h2>联系方式</h2>
@@ -275,7 +408,9 @@
         </details>
       </div></div>`)}
     ${section("jiaxing", "锐驰嘉兴超级工厂", `<p class="indexed-note">${intro("锐驰嘉兴超级工厂").repeat(2)}</p>${image("锐驰嘉兴超级工厂头图<br>轮播，点击跳转园区画廊", { asset: "campus-line-1", preview: "gallery", className: "campus-cover" })}`)}
-    ${section("events", "园区活动", `<div class="wire-cards three">${sampleDates(9).map((date, index) => {
+    ${section("events", "园区活动", `<div class="campus-event-pager">
+      <div class="store-viewport"><div class="store-track">
+        ${repeat(3, page => `<div class="store-page wire-cards three">${sampleDates(27).slice(page * 9, page * 9 + 9).map((date, index) => {
       const tag = campusTags[index % campusTags.length];
       return `<article data-card-tags="${tag}">
         <button type="button" class="wire-card" data-preview="event" data-title="园区活动名称">
@@ -284,6 +419,9 @@
           ${cardDate(date)}
         </button>
       </article>`; }).join("")}</div>`)}
+      </div></div>
+      <div class="store-pagination">${pagerControls}</div>
+    </div>`)}
     ${section("residency", "驻地计划", `<p class="indexed-note">${intro("驻地计划").repeat(2)}</p>${image("驻地计划头图", { className: "campus-cover residency-cover" })}${creatorGrid("residency", 16)}`)}
     ${section("came-campus", "came camp)us(", `
       <p class="indexed-note">${intro("came camp)us(").repeat(2)}</p>
@@ -295,6 +433,8 @@
       </div>`)}
   </div>`);
 
+
+  document.querySelectorAll(".about-store-group, .campus-event-pager").forEach(setupPager);
 
   for (const section of document.querySelectorAll(".academy-extract")) {
     const buttons = [...section.querySelectorAll("[data-extract]")];

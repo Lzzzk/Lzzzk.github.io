@@ -815,10 +815,8 @@ html:has(.content-preview[open]) { overflow: hidden; }
 
 .about-stores summary { list-style: none; cursor: pointer; }
 .about-stores summary::-webkit-details-marker { display: none; }
-.about-stores-meta { display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: 8px; }
-.about-stores-meta > span { white-space: nowrap; }
 .about-stores[open] .stores-expand, .about-stores:not([open]) .stores-collapse { display: none; }
-.about-stores .about-store { border-top: 0; padding-block: 10px; }
+
 
 .social-account { display: block; }
 .social-qr + .social-account { margin-top: 10px; }
@@ -868,3 +866,75 @@ html:has(.content-preview[open]) { overflow: hidden; }
 }
 
 html:has(#creators:not([hidden]), #campus:not([hidden])) { overflow-anchor: none; }
+
+#catalog .indexed-body { padding-top: 0; }
+.catalog-category { scroll-margin-top: var(--nav-height); }
+.catalog-category .catalog-cover { grid-area: auto; min-height: calc(100svh - var(--nav-height)); }
+.catalog-category .cards { grid-area: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
+.catalog-category .card { grid-column: auto; }
+#catalog .index-sidebar {
+  --catalog-line: clamp(26px, calc((100svh - 70px) / 15), 50px);
+  font-size: min(42.5px, calc(var(--catalog-line) * .95));
+  line-height: var(--catalog-line);
+}
+#catalog .index-sidebar > p, #catalog .catalog-nav-spaced { margin-bottom: 0; }
+#catalog .index-sidebar > p { margin-bottom: var(--catalog-line); }
+#catalog .catalog-nav-spaced { margin-top: var(--catalog-line); }
+@media (max-width: 1100px) {
+  .catalog-category .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .catalog-category .cards { grid-template-columns: minmax(0, 1fr); }
+  #catalog .catalog-nav-spaced { margin-top: 0; }
+}
+
+.about-network { row-gap: 0; }
+.about-network-intro { grid-column: 9 / -1; font-size: 20px; line-height: 30px; }
+.about-store-group { grid-column: 7 / -1; min-width: 0; position: relative; font-size: 20px; line-height: 30px; }
+.store-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--gap); }
+.about-stores summary { align-items: start; border-top: 1px solid; padding-block: 10px; }
+.about-stores summary > :first-child { grid-column: 1 / span 2; }
+.stores-count { grid-column: 3 / span 2; }
+.stores-expand, .stores-collapse { grid-column: 6; justify-self: end; white-space: nowrap; }
+.store-pagination { position: absolute; inset: 11px 0 auto; pointer-events: none; }
+.store-pagination-controls { grid-column: 5; display: flex; gap: 8px; align-items: center; pointer-events: auto; white-space: nowrap; }
+.store-pagination button:disabled { color: var(--muted); cursor: default; }
+.store-viewport { overflow: clip; overscroll-behavior-x: contain; touch-action: pan-y pinch-zoom; }
+.store-track { display: flex; align-items: flex-start; transform: translateX(calc(-100% * var(--store-page, 0))); transition: transform .3s ease-out; }
+.store-page { flex: 0 0 100%; min-width: 0; }
+.about-store { padding-block: 10px; }
+.store-city { grid-column: 2; }
+.store-city-domestic { grid-column: 1 / span 2; }
+.store-address { grid-column: 3 / span 2; }
+.store-phone { grid-column: 5 / span 2; }
+@media (max-width: 720px) {
+  .about-network-intro, .about-store-group { grid-column: 1 / -1; }
+  .store-grid { column-gap: 8px; }
+  .about-store-group { font-size: 15px; line-height: 23px; }
+  .store-pagination-controls { gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .store-track { transition: none; }
+}
+
+.store-pagination-controls button:disabled { visibility: hidden; }
+.campus-event-pager { min-width: 0; }
+:is(.campus-event-pager, .catalog-pager) .store-pagination { position: static; display: flex; justify-content: flex-end; margin-top: 12px; }
+.pager-cursor {
+  position: fixed;
+  z-index: 8;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #000;
+  font-size: 20px;
+  line-height: 30px;
+  white-space: nowrap;
+}
+.pager-cursor:not([data-prev]) .pager-prev,
+.pager-cursor:not([data-next]) .pager-next { visibility: hidden; }
+.hero { touch-action: pan-y pinch-zoom; }
+
+.catalog-pager { min-width: 0; }

@@ -403,7 +403,8 @@ function addTagFilters(section, labels, single = false) {
   group.setAttribute("role", "group");
   group.setAttribute("aria-label", "筛选");
   const cards = section.querySelectorAll("[data-card-tags]");
-  function update(preservePosition = false) {
+  function update(fromFilterClick = false) {
+    const returnToTop = fromFilterClick && section.closest("#creators");
     const selected = buttons.filter(button => button.getAttribute("aria-pressed") === "true").map(button => button.dataset.tag);
     group.classList.toggle("has-selection", selected.length > 0);
     for (const button of buttons) button.lastElementChild.textContent = selected.includes(button.dataset.tag) ? "−" : "+";
@@ -411,7 +412,7 @@ function addTagFilters(section, labels, single = false) {
     const readingTop = header.getBoundingClientRect().bottom + 24;
     let anchor;
     let anchorTop;
-    if (preservePosition) {
+    if (fromFilterClick && !returnToTop) {
       const candidates = [...cards].filter(matches);
       anchor = candidates.find(card => {
         if (card.hidden) return false;
@@ -424,7 +425,7 @@ function addTagFilters(section, labels, single = false) {
         anchorTop = Math.max(readingTop, section.getBoundingClientRect().top);
       }
     }
-    if (preservePosition && section.closest("#creators")) {
+    if (returnToTop) {
       section.dispatchEvent(new Event("collapse-creator-card", { bubbles: true }));
     }
     for (const card of cards) {
@@ -432,7 +433,9 @@ function addTagFilters(section, labels, single = false) {
       const expanded = card.querySelector(".creator-toggle[aria-expanded='true']");
       if (card.hidden && expanded) expanded.click();
     }
-    if (anchor) {
+    if (returnToTop) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    } else if (anchor) {
       window.scrollBy({ top: anchor.getBoundingClientRect().top - anchorTop, behavior: "instant" });
     }
     queueScrollEffects();

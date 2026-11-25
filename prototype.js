@@ -74,9 +74,9 @@ document.addEventListener("visibilitychange", startSlideshow);
 showSlide(0);
 startSlideshow();
 
-const products = ["沙发", "休闲椅", "餐桌", "餐椅", "书桌", "床", "柜子", "配品"];
-const productKeys = ["sofas", "lounge-chairs", "dining-tables", "dining-chairs", "desks", "beds", "cabinets", "accessories"];
-const startsProductGroup = index => [2, 4, 6].includes(index);
+const products = ["沙发", "茶几", "休闲椅", "椅", "餐桌", "书桌", "床", "柜", "配品"];
+const productKeys = ["sofas", "coffee-tables", "lounge-chairs", "dining-chairs", "dining-tables", "desks", "beds", "cabinets", "accessories"];
+const startsProductGroup = index => [2, 4, 6, 8].includes(index);
 const menus = {
   products,
   catalog: products,
@@ -120,7 +120,7 @@ productKeys.forEach((key, index) => {
   pager.innerHTML = `<div class="store-viewport"><div class="store-track"></div></div>
     <div class="store-pagination">${pagerControls}</div>`;
   const track = pager.querySelector(".store-track");
-  const count = [16, 15, 12, 17][index % 4];
+  const count = [16, 15, 15, 17, 12, 16, 15, 12, 17][index];
   for (let start = 0; start < count; start += 9) {
     const cards = document.createElement("div");
     cards.className = "cards store-page";
